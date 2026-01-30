@@ -1,0 +1,18 @@
+.dashboard-container {
+    width: 100%;
+}
+
+.region-card {
+    padding: 1rem;
+    background-color: #f3f3f3;
+}
+
+.metric-card {
+    padding: 0.5rem;
+}
+
+.metric-card:hover {
+    background-color: #ffffff;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease;
+}

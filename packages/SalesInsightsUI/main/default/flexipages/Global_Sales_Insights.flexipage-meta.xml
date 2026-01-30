@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Home page for global sales insights and metrics</description>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>regionalDashboard</componentName>
+                <identifier>c_regionalDashboard</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>region1</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>opportunityHeatmap</componentName>
+                <identifier>c_opportunityHeatmap</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>region2</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <masterLabel>Global Sales Insights</masterLabel>
+    <template>
+        <name>flexipage:appHomeTemplateHeaderTwoColumns</name>
+        <properties>
+            <name>enablePageActionConfig</name>
+            <value>false</value>
+        </properties>
+    </template>
+    <type>AppPage</type>
+</FlexiPage>
