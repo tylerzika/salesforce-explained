@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Dashboard xmlns="http://soap.sforce.com/2006/04/metadata">
+    <backgroundEndColor>#FFFFFF</backgroundEndColor>
+    <backgroundFadeDirection>Diagonal</backgroundFadeDirection>
+    <backgroundStartColor>#FFFFFF</backgroundStartColor>
+    <dashboardType>SpecifiedUser</dashboardType>
+    <description>Comprehensive dashboard showing Sales Cloud performance metrics including pipeline value, conversion rates, and regional performance</description>
+    <leftSection>
+        <columnSize>Medium</columnSize>
+        <components>
+            <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+            <componentType>Metric</componentType>
+            <displayUnits>Auto</displayUnits>
+            <indicatorBreakpoint1>33.0</indicatorBreakpoint1>
+            <indicatorBreakpoint2>67.0</indicatorBreakpoint2>
+            <indicatorHighColor>#00D28E</indicatorHighColor>
+            <indicatorLowColor>#E74C3C</indicatorLowColor>
+            <indicatorMiddleColor>#FFB75D</indicatorMiddleColor>
+            <metricLabel>Total Pipeline Value</metricLabel>
+            <report>Sales_Reports/Pipeline_Value_by_Stage</report>
+        </components>
+        <components>
+            <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+            <chartAxisRange>Auto</chartAxisRange>
+            <componentType>Bar</componentType>
+            <displayUnits>Auto</displayUnits>
+            <drillEnabled>false</drillEnabled>
+            <drillToDetailEnabled>false</drillToDetailEnabled>
+            <enableHover>true</enableHover>
+            <expandOthers>false</expandOthers>
+            <legendPosition>Bottom</legendPosition>
+            <report>Sales_Reports/Pipeline_Value_by_Stage</report>
+            <showPercentage>false</showPercentage>
+            <showValues>true</showValues>
+            <sortBy>RowLabelAscending</sortBy>
+            <title>Pipeline by Stage</title>
+            <useReportChart>false</useReportChart>
+        </components>
+        <components>
+            <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+            <chartAxisRange>Auto</chartAxisRange>
+            <componentType>Donut</componentType>
+            <displayUnits>Auto</displayUnits>
+            <drillEnabled>false</drillEnabled>
+            <drillToDetailEnabled>false</drillToDetailEnabled>
+            <enableHover>true</enableHover>
+            <expandOthers>false</expandOthers>
+            <legendPosition>Right</legendPosition>
+            <report>Sales_Reports/Lead_Conversion_Rate</report>
+            <showPercentage>true</showPercentage>
+            <showTotal>true</showTotal>
+            <showValues>false</showValues>
+            <sortBy>RowLabelAscending</sortBy>
+            <title>Lead Conversion Rate</title>
+            <useReportChart>false</useReportChart>
+        </components>
+    </leftSection>
+    <middleSection>
+        <columnSize>Medium</columnSize>
+        <components>
+            <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+            <componentType>Metric</componentType>
+            <displayUnits>Auto</displayUnits>
+            <indicatorBreakpoint1>33.0</indicatorBreakpoint1>
+            <indicatorBreakpoint2>67.0</indicatorBreakpoint2>
+            <indicatorHighColor>#00D28E</indicatorHighColor>
+            <indicatorLowColor>#E74C3C</indicatorLowColor>
+            <indicatorMiddleColor>#FFB75D</indicatorMiddleColor>
+            <metricLabel>Total Closed Won</metricLabel>
+            <report>Sales_Reports/Closed_Won_Deals_by_Region</report>
+        </components>
+        <components>
+            <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+            <chartAxisRange>Auto</chartAxisRange>
+            <componentType>Column</componentType>
+            <displayUnits>Auto</displayUnits>
+            <drillEnabled>false</drillEnabled>
+            <drillToDetailEnabled>false</drillToDetailEnabled>
+            <enableHover>true</enableHover>
+            <expandOthers>false</expandOthers>
+            <legendPosition>Bottom</legendPosition>
+            <report>Sales_Reports/Closed_Won_Deals_by_Region</report>
+            <showPercentage>false</showPercentage>
+            <showValues>true</showValues>
+            <sortBy>RowLabelAscending</sortBy>
+            <title>Closed Won by Region</title>
+            <useReportChart>false</useReportChart>
+        </components>
+    </middleSection>
+    <rightSection>
+        <columnSize>Medium</columnSize>
+        <components>
+            <autoselectColumnsFromReport>false</autoselectColumnsFromReport>
+            <componentType>Table</componentType>
+            <displayUnits>Auto</displayUnits>
+            <drillEnabled>false</drillEnabled>
+            <drillToDetailEnabled>false</drillToDetailEnabled>
+            <indicatorHighColor>#00D28E</indicatorHighColor>
+            <indicatorLowColor>#E74C3C</indicatorLowColor>
+            <indicatorMiddleColor>#FFB75D</indicatorMiddleColor>
+            <report>Sales_Reports/Pipeline_Value_by_Stage</report>
+            <showPicturesOnTables>true</showPicturesOnTables>
+            <sortBy>RowLabelAscending</sortBy>
+            <title>Top Opportunities</title>
+        </components>
+    </rightSection>
+    <runningUser>admin@salesforce-explained.com</runningUser>
+    <textColor>#000000</textColor>
+    <title>Sales Performance Dashboard</title>
+    <titleColor>#000000</titleColor>
+    <titleSize>12</titleSize>
+</Dashboard>

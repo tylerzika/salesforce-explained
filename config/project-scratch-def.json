@@ -1,11 +1,31 @@
 {
   "orgName": "Salesforce Explained",
   "edition": "Developer",
-  "features": ["EnableSetPasswordInApi", "Einstein1AIPlatform"],
+  "features": [
+    "EnableSetPasswordInApi",
+    "Einstein1AIPlatform",
+    "MultiCurrency",
+    "Territory2",
+    "SalesUser",
+    "Forecasting3"
+  ],
   "settings": {
     "lightningExperienceSettings": { "enableS1DesktopEnabled": true },
     "mobileSettings": { "enableS1EncryptedStoragePref2": false },
     "agentPlatformSettings": { "enableAgentPlatform": true },
-    "einsteinGptSettings": { "enableEinsteinGptPlatform": true }
+    "einsteinGptSettings": { "enableEinsteinGptPlatform": true },
+    "forecastingSettings": {
+      "forecastingEnabled": true
+    },
+    "opportunitySettings": {
+      "enableOpportunityTeam": true,
+      "promptToAddProducts": true
+    },
+    "chatterSettings": {
+      "enableChatter": true
+    },
+    "activitiesSettings": {
+      "enableGroupTasks": true
+    }
   }
 }
