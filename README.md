@@ -1,6 +1,26 @@
-# Salesforce DX Project: Next Steps
+# Salesforce Explained
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+A Salesforce DX project with CI/CD capabilities for automated authentication and scratch org management.
+
+## Authentication & CI/CD Setup
+
+This repository includes JWT-based authentication for CI/CD pipelines. See [AUTHENTICATION.md](AUTHENTICATION.md) for detailed setup instructions.
+
+### Quick Start
+
+1. Set up your Connected App in Salesforce (see [AUTHENTICATION.md](AUTHENTICATION.md))
+2. Configure your environment variables or GitHub secrets
+3. Run authentication: `./scripts/auth.sh`
+4. Create a scratch org: `./scripts/create-scratch-org.sh "MyScratchOrg" 7`
+
+### CI/CD Pipeline
+
+The repository includes a GitHub Actions workflow that automatically:
+- Authenticates to your Salesforce Dev Hub
+- Creates a scratch org for testing
+- Deploys your code
+- Runs tests
+- Cleans up resources
 
 ## How Do You Plan to Deploy Your Changes?
 

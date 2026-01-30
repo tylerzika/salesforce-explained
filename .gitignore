@@ -1,3 +1,12 @@
 .sf
 .sfdx
 .vscode
+
+# JWT Authentication files - never commit these!
+server.key
+server.csr
+server.crt
+.env
+
+# Node modules (if using npm)
+node_modules/

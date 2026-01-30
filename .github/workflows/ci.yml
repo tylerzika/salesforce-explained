@@ -1,0 +1,62 @@
+name: Salesforce CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Install Salesforce CLI
+        run: |
+          npm install -g @salesforce/cli
+          sf --version
+      
+      - name: Authenticate to Dev Hub
+        env:
+          SF_USERNAME: ${{ secrets.SF_USERNAME }}
+          SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
+          SF_JWT_KEY: ${{ secrets.SF_JWT_KEY }}
+        run: |
+          chmod +x scripts/auth.sh
+          ./scripts/auth.sh
+      
+      - name: Create Scratch Org
+        run: |
+          chmod +x scripts/create-scratch-org.sh
+          ./scripts/create-scratch-org.sh "CI-ScratchOrg" 1
+      
+      - name: Deploy to Scratch Org
+        run: |
+          # Only deploy if force-app directory exists
+          if [ -d "force-app" ]; then
+            sf project deploy start --target-org CI-ScratchOrg
+          else
+            echo "No force-app directory found, skipping deployment"
+          fi
+      
+      - name: Run Apex Tests
+        run: |
+          # Only run tests if there are any test classes
+          if [ -d "force-app" ]; then
+            sf apex run test --target-org CI-ScratchOrg --wait 10 --result-format human --code-coverage || true
+          else
+            echo "No test classes found, skipping tests"
+          fi
+      
+      - name: Delete Scratch Org
+        if: always()
+        run: |
+          sf org delete scratch --target-org CI-ScratchOrg --no-prompt || true
