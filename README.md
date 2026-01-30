@@ -94,6 +94,10 @@ sf org open -o MyScratchOrg
 
 ### Deploy to Sandbox or Production
 
+**For detailed deployment instructions including validation, testing, and troubleshooting, see the [Deployment Guide](./DEPLOYMENT_GUIDE.md).**
+
+Quick deployment:
+
 ```bash
 # Authenticate to your target org
 sf org login web -a MyTargetOrg
