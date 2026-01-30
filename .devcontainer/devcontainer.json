@@ -1,5 +1,5 @@
 {
-  "name": "Agentforce Development",
+  "name": "Salesforce Platform Development Dev Container for GitHub's Codespaces",
   "image": "mcr.microsoft.com/devcontainers/base:debian",
   "hostRequirements": {
     "cpus": 4,
