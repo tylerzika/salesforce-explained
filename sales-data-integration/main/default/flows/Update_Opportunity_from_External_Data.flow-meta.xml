@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <description>Update opportunity details from external data source</description>
+    <label>Update Opportunity from External Data</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <object>Opportunity</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <actionCalls>
+        <name>Fetch_External_Data</name>
+        <label>Fetch External Data</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <connector>
+            <targetReference>Update_Opportunity_Details</targetReference>
+        </connector>
+        <actionName>ExternalService__Opportunity_Data_Service</actionName>
+        <actionType>externalService</actionType>
+        <inputParameters>
+            <name>opportunityId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <outputParameters>
+            <assignToReference>externalData</assignToReference>
+            <name>responseBody</name>
+        </outputParameters>
+    </actionCalls>
+    <recordUpdates>
+        <name>Update_Opportunity_Details</name>
+        <label>Update Opportunity Details</label>
+        <locationX>176</locationX>
+        <locationY>252</locationY>
+        <inputReference>$Record</inputReference>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <elementReference>externalData.description</elementReference>
+            </value>
+        </inputAssignments>
+    </recordUpdates>
+    <variables>
+        <name>externalData</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Opportunity</objectType>
+    </variables>
+</Flow>

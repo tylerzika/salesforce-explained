@@ -1,11 +1,21 @@
 {
   "packageDirectories": [
     {
-      "path": "force-app",
+      "path": "sales-process-core",
+      "package": "SalesProcessCore",
+      "versionName": "ver 1.0",
+      "versionNumber": "1.0.0.NEXT",
       "default": true
+    },
+    {
+      "path": "sales-data-integration",
+      "package": "SalesDataIntegration",
+      "versionName": "ver 1.0",
+      "versionNumber": "1.0.0.NEXT",
+      "default": false
     }
   ],
-  "name": "Coinbase",
+  "name": "Salesforce Sales Cloud Packages",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "65.0"
