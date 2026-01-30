@@ -1,76 +1,103 @@
 # Salesforce Explained: Global Sales Cloud Packages
 
-This repository showcases two unlocked packages designed to demonstrate Salesforce Sales Cloud capabilities for international sales scenarios. These packages provide a modular, educational resource for understanding how to build and deploy scalable sales solutions.
+This repository showcases two unlocked packages designed to demonstrate **Salesforce Sales Cloud best practices** for international sales scenarios. These packages prioritize **declarative (configuration-based) development** over custom code, following the principle of "clicks, not code."
+
+## 🎯 Design Philosophy
+
+### Declarative Development First
+These packages demonstrate **Sales Cloud best practices** by:
+- **Using configuration over code**: Flows, Formula Fields, Assignment Rules
+- **Leveraging platform features**: Native forecasting, lead management, reporting
+- **Minimizing custom development**: LWC only when platform limits are reached
+- **Enabling admin maintenance**: Point-and-click configuration
+
+### When Custom Code is Appropriate
+Custom code (Apex/LWC) is used **only** to demonstrate:
+- Platform limitations that can't be solved declaratively
+- Advanced UI requirements beyond standard dashboard capabilities
+- Specific visualizations not available in standard components
 
 ## 📦 Packages Overview
 
 ### 1. GlobalSalesCore
-**Backend/Core Functionality Package**
+**Backend/Core Functionality Package (100% Declarative)**
 
-The GlobalSalesCore package provides the foundational data model and business logic for managing international sales operations.
+The GlobalSalesCore package provides the foundational data model and business logic for managing international sales operations **using only declarative features**.
 
 **Key Features:**
 - **Custom Objects**: RegionalQuota__c, MultiCurrencySettings__c
 - **Custom Fields**: Extended Lead, Opportunity, and Account objects with region and currency fields
-- **Apex Classes**: LeadConversionHandler, OpportunityRoutingService with comprehensive test coverage
-- **Flows**: Automated lead follow-up and forecasting adjustments
+- **Formula Fields**: Calculated Priority for automatic opportunity prioritization
+- **Record-Triggered Flows**: 
+  - Lead follow-up automation (creates tasks for high-priority leads)
+  - Forecasting adjustment (auto-categorizes opportunities based on probability)
+  - Region sync from Lead to Opportunity
+- **Assignment Rules**: Automated lead routing to regional teams
 - **Permission Sets**: Role-based access for regional sales reps and managers
-- **Sharing Rules**: Region-specific data access controls
+
+**No Apex Code**: Demonstrates that complex business logic can be implemented declaratively.
 
 [📖 View GlobalSalesCore Documentation](packages/GlobalSalesCore/README.md)
 
 ### 2. SalesInsightsUI
-**Frontend/UI Package**
+**Frontend/UI Package (LWC Only for Platform Limitations)**
 
-The SalesInsightsUI package provides interactive visualizations and reporting capabilities for monitoring global sales performance.
+The SalesInsightsUI package provides visualizations for monitoring global sales performance. Uses **standard reports** where possible, and **custom LWC only** for visualizations that exceed platform capabilities.
 
 **Key Features:**
-- **Lightning Web Components**:
-  - Regional Dashboard: Interactive metrics by region
-  - Opportunity Heatmap: Visual pipeline analysis
-- **Pre-configured Reports**: Regional pipeline and revenue performance reports
-- **Lightning App Page**: "Global Sales Insights" page combining all UI components
+- **Standard Reports** (Preferred):
+  - Regional Opportunity Pipeline (standard summary report)
+  - Regional Revenue Performance (standard report with chart)
+- **Lightning Web Components** (Only for platform limitations):
+  - Regional Dashboard: Interactive filtering not available in standard dashboards
+  - Opportunity Heatmap: Matrix visualization not supported by standard charts
+- **Lightning App Page**: Combines components for executive view
 - **Responsive Design**: Mobile and desktop optimized
+
+**Why LWC**: Used only to demonstrate UI customization beyond standard dashboard capabilities (heatmaps, real-time filtering, multi-metric cards).
 
 [📖 View SalesInsightsUI Documentation](packages/SalesInsightsUI/README.md)
 
 ## 🎯 Use Cases
 
-These packages demonstrate solutions for:
+These packages demonstrate declarative solutions for:
 - **Multi-Regional Sales Management**: Handle sales operations across North America, EMEA, APAC, and LATAM
-- **Multi-Currency Support**: Track and convert currency for international deals
-- **Lead Routing**: Automatically route leads to appropriate regional teams
-- **Forecasting**: Categorize and track opportunities for accurate forecasting
-- **Sales Analytics**: Visual dashboards and reports for executive insights
-- **Quota Management**: Set and track regional quotas by fiscal period
+- **Automated Lead Routing**: Assignment rules route leads without custom code
+- **Intelligent Forecasting**: Flows automatically categorize opportunities
+- **Priority Calculation**: Formula fields determine priority in real-time
+- **Sales Analytics**: Standard reports with custom visualizations only when needed
+- **Quota Management**: Track regional quotas by fiscal period
 
 ## 🏗️ Architecture
 
-The packages follow a **modular architecture** pattern:
+The packages follow a **declarative-first architecture** pattern:
 
 ```
-┌─────────────────────────────────────┐
-│      SalesInsightsUI (UI Layer)    │
-│   - LWC Components                  │
-│   - Reports & Dashboards            │
-│   - Lightning Pages                 │
-└─────────────┬───────────────────────┘
-              │ depends on
-              ↓
-┌─────────────────────────────────────┐
-│   GlobalSalesCore (Business Logic)  │
-│   - Data Model                      │
-│   - Apex Classes                    │
-│   - Flows & Automation              │
-│   - Security & Permissions          │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────┐
+│     SalesInsightsUI (UI Layer)             │
+│  - Standard Reports (PRIMARY)               │
+│  - LWC Components (only for limitations)    │
+│  - Lightning Pages                          │
+└──────────────┬──────────────────────────────┘
+               │ depends on
+               ↓
+┌─────────────────────────────────────────────┐
+│  GlobalSalesCore (Business Logic - 100%     │
+│                   Declarative)              │
+│  - Data Model (Objects & Fields)            │
+│  - Formula Fields                           │
+│  - Record-Triggered Flows                   │
+│  - Assignment Rules                         │
+│  - Permission Sets                          │
+└─────────────────────────────────────────────┘
 ```
 
 **Benefits of This Architecture:**
-- **Separation of Concerns**: Backend logic independent from UI
-- **Reusability**: Core package can be used with different UI implementations
-- **Maintainability**: Updates to UI don't affect core business logic
-- **Scalability**: Easy to extend with additional packages
+- **Admin-Maintainable**: No Apex means admins can modify flows and rules
+- **Lower TCO**: Less custom code to maintain and test
+- **Faster Delivery**: Declarative features deploy more quickly
+- **Platform Upgrades**: Salesforce maintains declarative features
+- **Governor Limit Friendly**: Platform-optimized automation
 
 ## 🚀 Quick Start
 
@@ -87,7 +114,7 @@ The packages follow a **modular architecture** pattern:
 # Authenticate to your org
 sf org login web --alias myorg
 
-# Deploy GlobalSalesCore first
+# Deploy GlobalSalesCore first (100% declarative)
 sf project deploy start --source-dir packages/GlobalSalesCore --target-org myorg
 
 # Then deploy SalesInsightsUI
@@ -98,7 +125,7 @@ sf project deploy start --source-dir packages/SalesInsightsUI --target-org myorg
 ```bash
 # Create GlobalSalesCore package
 sf package create --name "GlobalSalesCore" \
-  --description "Core functionality for global sales operations" \
+  --description "Declarative core functionality for global sales" \
   --package-type Unlocked \
   --path packages/GlobalSalesCore
 
@@ -129,117 +156,137 @@ sf package install --package 04t... --target-org myorg --wait 10
    sf org assign permset --name Regional_Sales_Manager --target-org myorg
    ```
 
-2. **Add Components to Pages**
+2. **Activate Flows**
+   - Navigate to Setup > Flows
+   - Verify flows are Active: Lead Follow-Up, Forecasting Adjustment, Region Sync
+
+3. **Configure Assignment Rules**
+   - Navigate to Setup > Lead Assignment Rules
+   - Update "Regional Lead Assignment" with actual user/queue assignments
+   - Activate the rule
+
+4. **Add Components to Pages** (Optional - for LWC components)
    - Open Lightning App Builder
    - Add Regional Dashboard and Opportunity Heatmap to desired pages
    - Activate the "Global Sales Insights" app page
 
-3. **Set Up Sample Data** (Optional)
+5. **Set Up Sample Data** (Optional)
    - Create Regional Quota records
    - Create Multi-Currency Settings
    - Update existing Opportunities with SalesRegion__c values
 
 ## 📊 Package Contents
 
-### GlobalSalesCore Contents
+### GlobalSalesCore Contents (100% Declarative)
 ```
 packages/GlobalSalesCore/
 ├── main/default/
 │   ├── objects/
-│   │   ├── RegionalQuota__c/          # Custom object & fields
-│   │   ├── MultiCurrencySettings__c/  # Custom object & fields
-│   │   ├── Lead/fields/               # Custom fields
-│   │   ├── Opportunity/fields/        # Custom fields
-│   │   └── Account/fields/            # Custom fields
-│   ├── classes/
-│   │   ├── LeadConversionHandler.cls
-│   │   ├── LeadConversionHandlerTest.cls
-│   │   ├── OpportunityRoutingService.cls
-│   │   └── OpportunityRoutingServiceTest.cls
-│   ├── flows/
+│   │   ├── RegionalQuota__c/          # Custom object & 5 fields
+│   │   ├── MultiCurrencySettings__c/  # Custom object & 4 fields
+│   │   ├── Lead/fields/               # 2 custom fields
+│   │   ├── Opportunity/fields/        # 3 custom fields (including 1 formula)
+│   │   └── Account/fields/            # 2 custom fields
+│   ├── flows/                         # 3 record-triggered flows
 │   │   ├── Lead_Follow_Up_Automation.flow-meta.xml
-│   │   └── Forecasting_Adjustment_Automation.flow-meta.xml
-│   └── permissionsets/
+│   │   ├── Forecasting_Adjustment_Automation.flow-meta.xml
+│   │   └── Lead_to_Opportunity_Region_Sync.flow-meta.xml
+│   ├── assignmentRules/               # Lead assignment rules
+│   │   └── Lead.assignmentRules-meta.xml
+│   └── permissionsets/                # 2 permission sets
 │       ├── Regional_Sales_Rep.permissionset-meta.xml
 │       └── Regional_Sales_Manager.permissionset-meta.xml
 └── README.md
 ```
 
-### SalesInsightsUI Contents
+### SalesInsightsUI Contents (Reports + LWC for Limitations)
 ```
 packages/SalesInsightsUI/
 ├── main/default/
-│   ├── lwc/
-│   │   ├── regionalDashboard/
-│   │   │   ├── regionalDashboard.js
-│   │   │   ├── regionalDashboard.html
-│   │   │   ├── regionalDashboard.css
-│   │   │   └── regionalDashboard.js-meta.xml
-│   │   └── opportunityHeatmap/
-│   │       ├── opportunityHeatmap.js
-│   │       ├── opportunityHeatmap.html
-│   │       ├── opportunityHeatmap.css
-│   │       └── opportunityHeatmap.js-meta.xml
-│   ├── reports/GlobalSalesReports/
+│   ├── reports/GlobalSalesReports/    # 2 standard reports (preferred)
 │   │   ├── Regional_Opportunity_Pipeline.report-meta.xml
 │   │   └── Regional_Revenue_Performance.report-meta.xml
-│   └── flexipages/
+│   ├── lwc/                           # 2 LWC (only for limitations)
+│   │   ├── regionalDashboard/
+│   │   └── opportunityHeatmap/
+│   └── flexipages/                    # 1 Lightning page
 │       └── Global_Sales_Insights.flexipage-meta.xml
 └── README.md
 ```
 
 ## 🧪 Testing
 
-### Run Apex Tests
+### Testing Declarative Features
 ```bash
-# Run all tests in GlobalSalesCore
-sf apex run test --tests LeadConversionHandlerTest,OpportunityRoutingServiceTest \
-  --result-format human --target-org myorg
+# No Apex tests required - all automation is declarative!
 
-# Check code coverage
-sf apex get test --test-run-id 707... --code-coverage --target-org myorg
+# Test flows manually:
+# 1. Create a Lead with High priority -> Task should be created
+# 2. Update Opportunity probability to 85% -> Forecast Category = "Best Case"
+# 3. Convert Lead with region -> Opportunity inherits region
+
+# Test assignment rules:
+# Create Lead with Preferred Region and High Priority -> Should auto-assign
 ```
 
-### Component Testing
+### Testing Components
 - LWC components use mock data for demonstration
-- In production, connect components to Apex controllers for real data
+- In production, connect components to standard reports or Apex if needed
 - Use Salesforce Inspector or Developer Console to debug
 
 ## 📚 Learning Resources
 
 ### Salesforce Documentation
-- [Unlocked Packages](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_unlocked_pkg_intro.htm)
-- [Lightning Web Components](https://developer.salesforce.com/docs/component-library/documentation/en/lwc)
-- [Apex Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/)
 - [Flow Builder](https://help.salesforce.com/s/articleView?id=sf.flow.htm)
+- [Formula Fields](https://help.salesforce.com/s/articleView?id=sf.customize_functions.htm)
+- [Assignment Rules](https://help.salesforce.com/s/articleView?id=sf.customize_leadrules.htm)
+- [Standard Reports and Dashboards](https://help.salesforce.com/s/articleView?id=sf.reports_dashboards.htm)
+- [Lightning Web Components](https://developer.salesforce.com/docs/component-library/documentation/en/lwc)
 
 ### Trailhead Modules
-- [Build Unlocked Packages](https://trailhead.salesforce.com/content/learn/modules/unlocked-packages-for-customers)
+- [Build Flows with Flow Builder](https://trailhead.salesforce.com/content/learn/modules/business_process_automation)
+- [Formulas and Validations](https://trailhead.salesforce.com/content/learn/modules/point_click_business_logic)
+- [Reports and Dashboards](https://trailhead.salesforce.com/content/learn/modules/reports_dashboards)
 - [Lightning Web Components Basics](https://trailhead.salesforce.com/content/learn/modules/lightning-web-components-basics)
-- [Apex Testing](https://trailhead.salesforce.com/content/learn/modules/apex_testing)
 
 ## 🤝 Contributing
 
 This is an educational repository. Feel free to fork and extend for your own learning!
 
-**Suggestions for Extension:**
+**Suggestions for Extension (Declarative First):**
 - Add more regions and currencies
-- Implement actual API callouts for currency conversion
-- Add AI-powered opportunity scoring
-- Create mobile-optimized views
-- Add Einstein Analytics dashboards
-- Implement automated territory assignment
+- Create additional flows for territory management
+- Build more standard reports and dashboards
+- Add validation rules for data quality
+- Implement approval processes for discounts
+- Create additional assignment rules
 
 ## 📝 Version History
 
 ### v1.0.0 (Current)
-- Initial release of GlobalSalesCore package
-- Initial release of SalesInsightsUI package
-- Core objects, fields, and relationships
-- Apex classes with test coverage
-- LWC components with mock data
-- Pre-configured reports and dashboards
-- Permission sets and security model
+- **GlobalSalesCore**: 100% declarative with flows, formula fields, and assignment rules
+- **SalesInsightsUI**: Standard reports plus LWC only for platform limitations
+- Removed Apex classes in favor of declarative automation
+- Added formula field for calculated priority
+- Enhanced flows with full business logic
+- Added assignment rules for lead routing
+
+## 📄 Best Practices Summary
+
+### ✅ DO (Demonstrated in this repo)
+- Use Flows for process automation
+- Use Formula Fields for calculations
+- Use Assignment Rules for routing
+- Use Standard Reports first
+- Use LWC only for platform limitations
+- Document why custom code is necessary
+
+### ❌ DON'T (Avoided in this repo)
+- Write Apex for logic that Flows can handle
+- Create custom pages for standard reporting
+- Use code for routing (Assignment Rules exist)
+- Write code for simple calculations (use formulas)
+- Add custom code without justification
 
 ## 📄 License
 
@@ -254,4 +301,4 @@ For questions or issues:
 
 ---
 
-**Built with ❤️ for the Salesforce Community**
+**Built with ❤️ for the Salesforce Community - Clicks, Not Code!**

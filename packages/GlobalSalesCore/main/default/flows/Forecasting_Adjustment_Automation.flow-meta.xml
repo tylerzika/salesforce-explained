@@ -16,27 +16,144 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <decisions>
+        <name>Determine_Forecast_Category</name>
+        <label>Determine Forecast Category</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <defaultConnector>
+            <targetReference>Update_to_Omitted</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default - Omitted</defaultConnectorLabel>
+        <rules>
+            <name>Commit_Category</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Probability</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>90.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_to_Commit</targetReference>
+            </connector>
+            <label>Commit (90%+)</label>
+        </rules>
+        <rules>
+            <name>Best_Case_Category</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Probability</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <numberValue>70.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Probability</leftValueReference>
+                <operator>LessThan</operator>
+                <rightValue>
+                    <numberValue>90.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_to_Best_Case</targetReference>
+            </connector>
+            <label>Best Case (70-89%)</label>
+        </rules>
+        <rules>
+            <name>Pipeline_Category</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Probability</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Probability</leftValueReference>
+                <operator>LessThan</operator>
+                <rightValue>
+                    <numberValue>70.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_to_Pipeline</targetReference>
+            </connector>
+            <label>Pipeline (1-69%)</label>
+        </rules>
+    </decisions>
+    <recordUpdates>
+        <name>Update_to_Commit</name>
+        <label>Update to Commit</label>
+        <locationX>50</locationX>
+        <locationY>242</locationY>
+        <inputAssignments>
+            <field>ForecastCategory__c</field>
+            <value>
+                <stringValue>Commit</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_to_Best_Case</name>
+        <label>Update to Best Case</label>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
+        <inputAssignments>
+            <field>ForecastCategory__c</field>
+            <value>
+                <stringValue>Best Case</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_to_Pipeline</name>
+        <label>Update to Pipeline</label>
+        <locationX>302</locationX>
+        <locationY>242</locationY>
+        <inputAssignments>
+            <field>ForecastCategory__c</field>
+            <value>
+                <stringValue>Pipeline</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_to_Omitted</name>
+        <label>Update to Omitted</label>
+        <locationX>428</locationX>
+        <locationY>242</locationY>
+        <inputAssignments>
+            <field>ForecastCategory__c</field>
+            <value>
+                <stringValue>Omitted</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
+        <connector>
+            <targetReference>Determine_Forecast_Category</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Probability</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
         <object>Opportunity</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
-        <triggerType>RecordAfterSave</triggerType>
+        <triggerType>RecordBeforeSave</triggerType>
     </start>
     <status>Active</status>
-    <variables>
-        <name>varOpportunityId</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <name>varProbability</name>
-        <dataType>Number</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <scale>0</scale>
-    </variables>
 </Flow>

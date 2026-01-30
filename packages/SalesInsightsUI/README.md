@@ -1,13 +1,52 @@
 # SalesInsightsUI Package
 
 ## Overview
-The **SalesInsightsUI** package provides user interface components and reporting capabilities for visualizing international sales performance. This package complements the GlobalSalesCore package by offering interactive dashboards, heatmaps, and pre-configured reports designed for global sales operations.
+The **SalesInsightsUI** package provides user interface components and reporting capabilities for visualizing international sales performance. While the GlobalSalesCore package demonstrates declarative best practices, this package uses **Lightning Web Components to showcase UI customization that goes beyond standard platform features**.
+
+## Why Lightning Web Components?
+
+### Demonstrating Platform Limitations
+This package uses custom LWC development to address specific UI requirements that **cannot be met with out-of-the-box features**:
+
+1. **Interactive Heatmap Visualization**
+   - Standard dashboards don't support matrix/heatmap layouts with color intensity
+   - Native reports can't dynamically toggle between different metrics (amount vs count vs win rate)
+   - Cross-dimensional visualization (region × stage) requires custom rendering
+
+2. **Real-Time Regional Filtering**
+   - Standard dashboards require page refresh to change filters
+   - LWC enables instant client-side filtering without server round-trips
+   - Dynamic data updates and metric recalculation in real-time
+
+3. **Responsive Multi-Metric Cards**
+   - Native dashboard components have fixed layouts
+   - Custom cards with automatic layout adjustment based on screen size
+   - Conditional color-coding and formatting not available in standard components
+
+### Following Best Practices
+Even when using custom code, this package follows Salesforce best practices:
+- **LWC over Aura**: Uses modern Lightning Web Components framework
+- **Mock Data for Demo**: Shows UI patterns without requiring Apex
+- **Standard Styling**: Uses Salesforce Lightning Design System (SLDS)
+- **Configurable Properties**: Allows admins to customize without code changes
+- **Accessibility**: Follows WCAG standards for accessibility
+
+### When Custom UI is Appropriate
+Use custom LWC components when:
+- Standard dashboard components don't support required visualization
+- Interactive, real-time filtering is essential
+- Complex layouts or conditional formatting exceed platform capabilities
+- Specific user experience requires custom interaction patterns
+
+For most reporting needs, **use standard Salesforce Reports and Dashboards** (included in this package).
 
 ## Features
 
 ### Lightning Web Components
 
 #### Regional Dashboard (regionalDashboard)
+**Why Custom**: Standard dashboards can't provide real-time filtering with multiple metric cards and conditional color-coding in a single component.
+
 An interactive dashboard component that displays key sales metrics by region:
 - **Region Selector**: Filter data by specific regions (North America, EMEA, APAC, LATAM) or view all regions
 - **Key Metrics Displayed**:
@@ -22,6 +61,8 @@ An interactive dashboard component that displays key sales metrics by region:
 **Usage**: Can be added to App Pages, Home Pages, or Record Pages via Lightning App Builder
 
 #### Opportunity Heatmap (opportunityHeatmap)
+**Why Custom**: Standard Salesforce charts don't support heatmap visualization with intensity-based color coding across two dimensions.
+
 A visual heatmap component that shows opportunity distribution across regions and stages:
 - **Metric Selection**: Toggle between Amount, Count, or Win Rate views
 - **Heat Intensity**: Color-coded cells showing relative performance (light to dark blue)
@@ -32,6 +73,7 @@ A visual heatmap component that shows opportunity distribution across regions an
 **Usage**: Can be added to App Pages, Home Pages, or Record Pages via Lightning App Builder
 
 ### Pre-Configured Reports
+**Preferred Approach**: These reports use standard Salesforce reporting features and should be the first choice for most reporting needs.
 
 #### Regional Opportunity Pipeline
 - **Type**: Summary Report with Grouping
@@ -131,15 +173,14 @@ A custom Lightning App Page combining all UI components:
      - Modify chart types
    - Save reports to accessible folders
 
-4. **Create Dashboards** (Optional)
-   - Create a new dashboard
+4. **Create Dashboards Using Standard Features** (Recommended)
+   - Create a new dashboard using standard Dashboard Builder
    - Add report components:
      - Regional Opportunity Pipeline
      - Regional Revenue Performance
-   - Add LWC components:
-     - Regional Dashboard
-     - Opportunity Heatmap
+   - Add filters for dynamic reporting
    - Share dashboard with appropriate users
+   - **Note**: Standard dashboards are preferred over custom LWC for most use cases
 
 5. **Set Up User Access**
    - Ensure users have access to:
@@ -182,35 +223,33 @@ A custom Lightning App Page combining all UI components:
 
 ## Customization
 
-### Extending the Components
+### Connecting to Real Data
+The LWC components currently use mock data for demonstration. To connect to real Salesforce data:
 
-#### Adding Real Data to Components
-The components currently use mock data for demonstration. To connect to real Salesforce data:
+1. **Create Apex Classes** (Only when necessary)
+   - Create `@AuraEnabled` methods to query Regional Quotas and Opportunities
+   - Apply proper sharing rules (`with sharing`)
+   - Bulkify all queries
+   
+2. **Wire Apex to LWC**
+   - Import Apex methods in component JavaScript
+   - Use `@wire` decorator for reactive data
+   - Handle loading and error states
 
-1. Create Apex classes to query opportunities and regional quotas
-2. Wire the Apex methods to the LWC components
-3. Update the component logic to process real data
+3. **Update Component Logic**
+   - Replace `generateMockData()` with real Apex calls
+   - Process returned data to match component format
+   - Add error handling
 
-Example Apex method:
-```apex
-@AuraEnabled(cacheable=true)
-public static List<OpportunityData> getRegionalOpportunities(String region) {
-    // Query and return opportunity data
-}
-```
+**Note**: Only add Apex when declarative features (reports, dashboards) can't meet the requirement.
 
-#### Customizing Metrics
-To add or modify metrics in the components:
-1. Update the component's JavaScript file
-2. Add new properties to track additional metrics
-3. Update the HTML template to display new metrics
-4. Modify CSS for styling as needed
-
-### Modifying Reports
-- Use the Report Builder to add/remove fields
+### Extending Standard Reports
+To customize the included reports:
+- Use Report Builder to add/remove fields
 - Change groupings and filters
 - Add calculated fields using formulas
 - Change chart types and colors
+- Create joined reports for multiple data sources
 
 ## Architecture
 
@@ -220,10 +259,11 @@ The package follows Salesforce best practices:
 - **Lightning Design System**: Consistent styling and accessibility
 - **Responsive design**: Mobile-first approach
 - **Performance optimization**: Efficient rendering and data handling
+- **Declarative reports first**: Standard reports as primary option
 
 ## Dependencies
 This package depends on **GlobalSalesCore** package:
-- Custom fields: SalesRegion__c, ForecastCategory__c
+- Custom fields: SalesRegion__c, ForecastCategory__c, CalculatedPriority__c
 - Custom objects: RegionalQuota__c
 - The metadata relationship is defined in sfdx-project.json
 
@@ -234,9 +274,23 @@ This package depends on **GlobalSalesCore** package:
 - Safari 11+
 
 ## Known Limitations
-- Components use mock data by default (requires customization for real data)
-- Dashboards and reports require appropriate data volume for meaningful insights
-- Real-time data updates require page refresh
+- Components use mock data by default (requires Apex customization for real data)
+- Standard dashboards should be preferred when they meet requirements
+- Real-time data updates require page refresh unless connected to Apex
+
+## Best Practices Reminder
+
+### Use Standard Features First
+Before building custom components:
+1. Try standard Reports and Dashboards
+2. Use standard Chart types
+3. Leverage Dashboard Filters
+4. Create Report Types if needed
+5. Only use custom LWC when standard features can't meet the requirement
+
+### When to Use Custom vs Standard
+- **Standard Reports/Dashboards**: 90% of reporting needs
+- **Custom LWC**: Only for unique visualizations or interactions not supported by platform
 
 ## Troubleshooting
 
@@ -259,7 +313,7 @@ This package depends on **GlobalSalesCore** package:
 For issues or questions about this package, please refer to the main repository documentation or create an issue in the repository.
 
 ## Version History
-- **v1.0.0**: Initial release with Regional Dashboard, Opportunity Heatmap, reports, and app page
+- **v1.0.0**: Initial release with LWC components demonstrating platform limitations, plus standard reports
 
 ## License
 This package is provided as an educational resource for the Salesforce community.
