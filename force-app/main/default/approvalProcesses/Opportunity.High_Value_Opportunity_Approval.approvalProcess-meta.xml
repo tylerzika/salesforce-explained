@@ -18,6 +18,7 @@
         <allowDelegate>false</allowDelegate>
         <assignedApprover>
             <approver>
+                <name>Manager</name>
                 <type>userHierarchyField</type>
             </approver>
         </assignedApprover>
@@ -27,9 +28,10 @@
         <rejectBehavior>
             <type>RejectRequest</type>
         </rejectBehavior>
+        <stepNumber>1</stepNumber>
     </approvalStep>
     <description>Approval process for high-value opportunities exceeding $100,000. This ensures proper review and sign-off for large deals before they can be closed.</description>
-    <emailTemplate>unfiled$public/SupportCaseCreatedPhoneInbound</emailTemplate>
+    <emailTemplate>Sales_Templates/Lead_Converted_Notification</emailTemplate>
     <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
     <entryCriteria>
         <criteriaItems>

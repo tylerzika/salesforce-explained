@@ -20,11 +20,8 @@
         <members>Account.Region__c</members>
         <members>Lead.Region__c</members>
         <members>Opportunity.Region__c</members>
+        <members>Opportunity.Approval_Status__c</members>
         <name>CustomField</name>
-    </types>
-    <types>
-        <members>Lead</members>
-        <name>CustomObject</name>
     </types>
     <types>
         <members>Sales_Reports/Pipeline_Value_by_Stage</members>
@@ -40,7 +37,15 @@
         <members>Global_Sales_Territories.North_America</members>
         <members>Global_Sales_Territories.Europe</members>
         <members>Global_Sales_Territories.Asia_Pacific</members>
+        <members>Global_Sales_Territories.Latin_America</members>
+        <members>Global_Sales_Territories.Middle_East_Africa</members>
         <name>Territory2</name>
+    </types>
+    <types>
+        <members>Opportunity.Approved_High_Value_Opportunity</members>
+        <members>Opportunity.Rejected_High_Value_Opportunity</members>
+        <members>Opportunity.Submitted_for_Approval</members>
+        <name>WorkflowFieldUpdate</name>
     </types>
     <version>65.0</version>
 </Package>

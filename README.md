@@ -49,6 +49,8 @@ This Salesforce DX project provides a complete reference implementation of Sales
   - North America
   - Europe
   - Asia Pacific
+  - Latin America
+  - Middle East Africa
 - **Forecasting**: Enabled for sales quota management
 
 ## Deployment Instructions
