@@ -1,0 +1,33 @@
+{
+  "name": "Agentforce Development",
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "16gb",
+    "storage": "32gb"
+  },
+  "extensions": [
+    "salesforce.salesforcedx-vscode",
+    "salesforce.salesforcedx-vscode-core",
+    "salesforce.salesforcedx-vscode-apex",
+    "salesforce.salesforcedx-vscode-lwc",
+    "salesforce.salesforcedx-vscode-visualforce"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    },
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "salesforcedx-vscode-apex.java.home": "/usr/local/sdkman/candidates/java/current"
+      }
+    }
+  }
+}
