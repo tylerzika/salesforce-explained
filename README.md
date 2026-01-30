@@ -4,7 +4,10 @@ A Salesforce DX project with CI/CD capabilities for automated authentication and
 
 ## Authentication & CI/CD Setup
 
-This repository includes JWT-based authentication for CI/CD pipelines. See [AUTHENTICATION.md](AUTHENTICATION.md) for detailed setup instructions.
+This repository includes JWT-based authentication for CI/CD pipelines.
+
+- **Quick Start**: See [QUICKSTART.md](QUICKSTART.md) for a 5-minute setup guide
+- **Detailed Guide**: See [AUTHENTICATION.md](AUTHENTICATION.md) for comprehensive setup instructions
 
 ### Quick Start
 
