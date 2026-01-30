@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>65.0</apiVersion>
-    <description>Calls Apex from GlobalSalesCore package to calculate and set opportunity priority</description>
+    <description>Sets CalculatedPriority__c before save without Apex action</description>
     <label>Set Opportunity Priority</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -16,25 +16,19 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
-    <actionCalls>
-        <name>Calculate_Priority</name>
-        <label>Calculate Priority</label>
+    <assignments>
+        <name>Calculate_Priority_Locally</name>
+        <label>Calculate Priority Locally</label>
         <locationX>176</locationX>
         <locationY>134</locationY>
-        <actionName>OpportunityPriorityCalculator</actionName>
-        <actionType>apex</actionType>
-        <connector>
-            <targetReference>Update_Opportunity_Priority</targetReference>
-        </connector>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>opportunityId</name>
+        <assignmentItems>
+            <assignToReference>$Record.CalculatedPriority__c</assignToReference>
+            <operator>Assign</operator>
             <value>
-                <elementReference>$Record.Id</elementReference>
+                <stringValue>{!IF(AND(NOT(ISBLANK($Record.Amount)), $Record.Amount >= 100000), "High", IF(AND(NOT(ISBLANK($Record.Amount)), $Record.Amount >= 25000), "Medium", "Low"))}</stringValue>
             </value>
-        </inputParameters>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </actionCalls>
+        </assignmentItems>
+    </assignments>
     <recordUpdates>
         <name>Update_Opportunity_Priority</name>
         <label>Update Opportunity Priority</label>
@@ -43,7 +37,7 @@
         <inputAssignments>
             <field>CalculatedPriority__c</field>
             <value>
-                <elementReference>Calculate_Priority.priority</elementReference>
+                <elementReference>$Record.CalculatedPriority__c</elementReference>
             </value>
         </inputAssignments>
         <inputReference>$Record</inputReference>
@@ -52,7 +46,7 @@
         <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Calculate_Priority</targetReference>
+            <targetReference>Calculate_Priority_Locally</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
