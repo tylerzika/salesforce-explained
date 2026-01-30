@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    IMPORTANT: This Flow requires External Service setup before it can be activated.
+    The referenced action "ExternalService__Opportunity_Data_Service" must be created by:
+    1. Registering an External Service in Setup -> External Services
+    2. Importing an OpenAPI specification for your API
+    3. Linking it to the Named Credential: Opportunity_Data_Service
+    
+    See API_INTEGRATION_SETUP.md for detailed instructions.
+-->
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>65.0</apiVersion>
     <description>Update opportunity details from external data source</description>

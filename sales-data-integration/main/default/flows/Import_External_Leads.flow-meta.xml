@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    IMPORTANT: This Flow requires External Service setup before it can be activated.
+    The referenced action "ExternalService__External_Lead_Source_API" must be created by:
+    1. Registering an External Service in Setup -> External Services
+    2. Importing an OpenAPI specification for your API
+    3. Linking it to the Named Credential: External_Lead_Source_API
+    
+    Alternative: Replace the externalService action with an HTTP Callout action.
+    See API_INTEGRATION_SETUP.md for detailed instructions.
+-->
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>65.0</apiVersion>
     <description>Import leads from external system using API integration</description>

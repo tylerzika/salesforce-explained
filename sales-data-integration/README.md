@@ -4,6 +4,18 @@
 
 The **SalesDataIntegration** package demonstrates best practices for integrating external data sources with Salesforce Sales Cloud. This package showcases API integration patterns, data mapping strategies, and automated data synchronization using declarative tools and standard Salesforce features.
 
+## ⚠️ Important Prerequisites
+
+**Before deploying this package, please note:**
+
+1. **External Service Setup Required**: The Flows in this package reference External Service actions that must be configured separately in your Salesforce org before the Flows can be activated.
+
+2. **Named Credentials Configuration**: The Named Credentials included use placeholder values and must be updated with your actual API endpoints and credentials.
+
+3. **API Access Needed**: You must have access to external APIs that follow the data structure described in the documentation.
+
+**See the [API Integration Setup Guide](./API_INTEGRATION_SETUP.md) for detailed configuration instructions.**
+
 ## Key Features
 
 ### 1. External API Integration
