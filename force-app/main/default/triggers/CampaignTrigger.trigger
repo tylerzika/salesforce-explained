@@ -1,11 +1,11 @@
-trigger CampaignTrigger on Campaign (
-    before insert,
-    before update,
-    before delete,
-    after insert,
-    after update,
-    after delete,
-    after undelete
+trigger CampaignTrigger on Campaign(
+  before insert,
+  before update,
+  before delete,
+  after insert,
+  after update,
+  after delete,
+  after undelete
 ) {
-    TriggerEventLogger.log('Campaign', String.valueOf(Trigger.operationType));
+  TriggerEventLogger.log('Campaign', String.valueOf(Trigger.operationType));
 }

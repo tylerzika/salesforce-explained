@@ -5,3 +5,6 @@
 force-app/main/default/profiles/
 force-app/main/default/permissionsets/
 force-app/main/default/permissionsetgroups/
+
+node_modules/
+package-lock.json
