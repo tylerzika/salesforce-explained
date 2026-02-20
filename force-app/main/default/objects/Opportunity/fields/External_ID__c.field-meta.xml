@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>External_ID__c</fullName>
+    <caseSensitive>true</caseSensitive>
+    <description>Can be whatever you want. Doesn&apos;t belong to a specific external system.</description>
+    <externalId>true</externalId>
+    <label>External ID</label>
+    <length>100</length>
+    <required>true</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>
