@@ -1,15 +1,17 @@
 String accExID = 'ACCT-NIMBUS-ROASTERS-001';
 String conExID = 'CONT-MAYA-PATEL-001';
 String campExID = 'CAMP-Q2-WEBINAR-2026-001';
+String camp2ExID = 'CAMP-Q3-ROUNDTABLE-2026-001';
 String oppExID = 'OPP-ESPRESSO-SUBSCRIPTION-001';
 String campMemExID = 'CM-WEBINAR-MAYA-PATEL-001';
+String campMem2ExID = 'CM-ROUNDTABLE-MAYA-PATEL-001';
 
-Account accountRecord = new Account(
+Account a = new Account(
     External_ID__c = accExID,
     Name = 'Nimbus Roasters'
 );
 
-Contact contactRecord = new Contact(
+Contact c = new Contact(
     External_ID__c = conExID,
     FirstName = 'Maya',
     LastName = 'Patel',
@@ -18,26 +20,34 @@ Contact contactRecord = new Contact(
     Account = new Account(External_ID__c = accExID)
 );
 
-Campaign campaignRecord = new Campaign(
+Campaign camp1 = new Campaign(
     External_ID__c = campExID,
     Name = 'Q2 2026 Wholesale Espresso Webinar',
     IsActive = true,
     Status = 'In Progress'
 );
 
-Opportunity opportunityRecord = new Opportunity(
+Campaign camp2 = new Campaign(
+    External_ID__c = camp2ExID,
+    Name = 'Q3 2026 Supply Chain Roundtable',
+    IsActive = true,
+    Status = 'In Progress'
+);
+
+Opportunity opp = new Opportunity(
     External_ID__c = oppExID,
-    Name = 'Nimbus Roasters - Espresso Subscription Upgrade',
+    Name = 'Espresso Subscription Upgrade',
     StageName = 'Prospecting',
     CloseDate = Date.today().addDays(30),
     Amount = 18000,
     Account = new Account(External_ID__c = accExID)
 );
 
-upsert accountRecord External_ID__c;
-upsert contactRecord External_ID__c;
-upsert campaignRecord External_ID__c;
-upsert opportunityRecord External_ID__c;
+upsert a External_ID__c;
+upsert c External_ID__c;
+upsert camp1 External_ID__c;
+upsert camp2 External_ID__c;
+upsert opp External_ID__c;
 
 CampaignMember campaignMemberRecord = new CampaignMember(
     External_ID__c = campMemExID,
@@ -46,6 +56,70 @@ CampaignMember campaignMemberRecord = new CampaignMember(
     Contact = new Contact(External_ID__c = conExID)
 );
 
-upsert campaignMemberRecord External_ID__c;
+CampaignMember campaignMemberRecord2 = new CampaignMember(
+    External_ID__c = campMem2ExID,
+    Status = 'Responded',
+    Campaign = new Campaign(External_ID__c = camp2ExID),
+    Contact = new Contact(External_ID__c = conExID)
+);
 
-System.debug('Upsert complete for Account, Contact, Campaign, Opportunity, and CampaignMember.');
+upsert new List<CampaignMember>{campaignMemberRecord, campaignMemberRecord2} External_ID__c;
+
+OpportunityContactRole oppConRole = new OpportunityContactRole(
+    IsPrimary = true,
+    Opportunity = new Opportunity(External_ID__c = oppExID),
+    Contact = new Contact(External_ID__c = conExID)
+);
+
+upsert oppConRole;
+
+System.debug(
+    'Upsert complete for Account, Contact, 2 Campaigns, Opportunity, 2 CampaignMembers, and OpportunityContactRole.'
+);
+
+/*
+// Cleanup block (commented out): deletes all data created by this script.
+List<CampaignMember> campaignMembersToDelete = [
+    SELECT Id
+    FROM CampaignMember
+    WHERE External_ID__c IN :new Set<String>{campMemExID, campMem2ExID}
+];
+
+List<OpportunityContactRole> opportunityContactRolesToDelete = [
+    SELECT Id
+    FROM OpportunityContactRole
+    WHERE Opportunity.External_ID__c = :oppExID
+      AND Contact.External_ID__c = :conExID
+];
+
+List<Opportunity> opportunitiesToDelete = [
+    SELECT Id
+    FROM Opportunity
+    WHERE External_ID__c = :oppExID
+];
+
+List<Campaign> campaignsToDelete = [
+    SELECT Id
+    FROM Campaign
+    WHERE External_ID__c IN :new Set<String>{campExID, camp2ExID}
+];
+
+List<Contact> contactsToDelete = [
+    SELECT Id
+    FROM Contact
+    WHERE External_ID__c = :conExID
+];
+
+List<Account> accountsToDelete = [
+    SELECT Id
+    FROM Account
+    WHERE External_ID__c = :accExID
+];
+
+delete campaignMembersToDelete;
+delete opportunityContactRolesToDelete;
+delete opportunitiesToDelete;
+delete campaignsToDelete;
+delete contactsToDelete;
+delete accountsToDelete;
+*/
