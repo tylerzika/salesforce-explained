@@ -8,4 +8,12 @@ trigger AccountTrigger on Account (
     after undelete
 ) {
     TriggerEventLogger.log('Account', String.valueOf(Trigger.operationType));
+
+    if (Trigger.isBefore && (Trigger.isInsert || Trigger.isUpdate)) {
+        AccountTriggerHandler.handleBeforeInsertUpdate(Trigger.new);
+    }
+
+    if (Trigger.isAfter && (Trigger.isInsert || Trigger.isUpdate)) {
+        AccountTriggerHandler.handleAfterInsertUpdate(Trigger.new, Trigger.oldMap);
+    }
 }
