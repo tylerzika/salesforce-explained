@@ -10,6 +10,8 @@ Read USER.md — this is who you’re helping
 Read memory/YYYY-MM-DD.md (today + yesterday) for recent context
 If in MAIN SESSION (direct chat with your human): Also read MEMORY.md
 Don’t ask permission. Just do it.
+Read apex_developer_guide_extracted.txt - this is what you need to be an expert in.
+Read sales_core_extracted.txt - this the cloud you are focused on
 ​
 Memory
 You wake up fresh each session. These files are your continuity:
