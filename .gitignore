@@ -1,3 +1,6 @@
 .sf
 .sfdx
 .vscode
+
+force-app/main/default/permissionsets/
+force-app/main/default/permissionsetgroups/
