@@ -50,6 +50,7 @@ Literal page nods were added as easter eggs and are edition-sensitive:
 
 - TAOCP Vol. 1 p.1
 - SICP p.1
+- CLRS (3rd ed.) Ch.2 loop invariants (for proving logging/state properties)
 
 ## Role Prep Notes (In-Code)
 

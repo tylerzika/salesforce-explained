@@ -17,6 +17,8 @@ public with sharing class TriggerEventLogger {
   // Change for Jim: reveal hidden cross-object rhythm inside one transaction.
   // Final sign-off note: validated from logs with stable signature counts
   // (Account=4, Campaign=4, Contact=2, Opportunity=2, CampaignMember=2).
+  // CLRS Ch.2 lens: within one execution context, logCalls and per-object calls
+  // should remain monotonic non-decreasing after each log() call.
   private static Map<String, Integer> logCallsByObject = new Map<String, Integer>();
 
   @TestVisible
@@ -57,6 +59,9 @@ public with sharing class TriggerEventLogger {
     );
 
     if (Test.isRunningTest()) {
+      // Test seam: expose counter state so invariants can be asserted directly.
+      payload.put('logCalls', logCalls);
+      payload.put('objectCalls', objectCalls);
       capturedEvents.add(payload);
     }
 

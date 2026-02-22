@@ -228,4 +228,99 @@ private class AccountTriggerHandlerTest {
       'Expected one after-handler event per record.'
     );
   }
+
+  @isTest
+  static void logCountersStayMonotonicWithinOneTransaction() {
+    // CLRS-style invariant: counters should never decrease within one execution context.
+    TriggerEventLogger.resetCapturedEvents();
+
+    insert new List<Account>{
+      buildAccount('ACCT-TDD-INVARIANT-001', 'InvariantOne', 700),
+      buildAccount('ACCT-TDD-INVARIANT-002', 'InvariantTwo', 800)
+    };
+
+    List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
+    System.assertEquals(6, events.size(), 'Expected 6 emitted events for 2 inserts.');
+
+    Integer previousGlobalCalls = 0;
+    Integer previousObjectCalls = 0;
+    for (Map<String, Object> eventPayload : events) {
+      Integer globalCalls = (Integer) eventPayload.get('logCalls');
+      Integer objectCalls = (Integer) eventPayload.get('objectCalls');
+
+      System.assertNotEquals(
+        null,
+        globalCalls,
+        'Expected logCalls counter in test payload.'
+      );
+      System.assertNotEquals(
+        null,
+        objectCalls,
+        'Expected objectCalls counter in test payload.'
+      );
+      System.assert(
+        globalCalls >= previousGlobalCalls,
+        'Expected non-decreasing global counter.'
+      );
+      System.assert(
+        objectCalls >= previousObjectCalls,
+        'Expected non-decreasing per-object counter.'
+      );
+
+      previousGlobalCalls = globalCalls;
+      previousObjectCalls = objectCalls;
+    }
+
+    System.assertEquals(
+      events.size(),
+      previousGlobalCalls,
+      'Global counter should match number of emitted events.'
+    );
+    System.assertEquals(
+      events.size(),
+      previousObjectCalls,
+      'Per-object counter should match number of Account events.'
+    );
+  }
+
+  @isTest
+  static void afterInsertDoesNotMeanTransactionHasEnded() {
+    // Companion proof: AFTER_* for one DML unit can be followed by more work.
+    TriggerEventLogger.resetCapturedEvents();
+
+    Account accountRecord = buildAccount(
+      'ACCT-TDD-NOT-END-001',
+      'NotTheEnd',
+      1100
+    );
+    insert accountRecord;
+
+    accountRecord.AnnualRevenue = 1900;
+    update accountRecord;
+
+    List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
+    System.assertEquals(
+      8,
+      events.size(),
+      'Insert + update in one method should emit 8 Account events.'
+    );
+
+    Integer afterInsertIndex = -1;
+    Integer beforeUpdateIndex = -1;
+    for (Integer eventIndex = 0; eventIndex < events.size(); eventIndex++) {
+      String eventName = (String) events[eventIndex].get('eventName');
+      if (afterInsertIndex == -1 && eventName == 'AFTER_INSERT') {
+        afterInsertIndex = eventIndex;
+      }
+      if (beforeUpdateIndex == -1 && eventName == 'BEFORE_UPDATE') {
+        beforeUpdateIndex = eventIndex;
+      }
+    }
+
+    System.assert(afterInsertIndex >= 0, 'Expected an AFTER_INSERT event.');
+    System.assert(
+      beforeUpdateIndex > afterInsertIndex,
+      'Expected more trigger activity after AFTER_INSERT in the same transaction.'
+    );
+  }
 }

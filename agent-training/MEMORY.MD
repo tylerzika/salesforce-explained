@@ -20,3 +20,5 @@
 - Apex class static variables are transaction-scoped and persist across trigger invocations in the same execution context.
 - Trigger orchestration should stay thin; domain behavior belongs in handlers/services.
 - External-ID upsert scripts are useful for deterministic, repeatable debugging scenarios.
+- CLRS-style invariants are effective for proving trigger instrumentation behavior (for example, monotonic `logCalls` and per-object counters within one transaction).
+- `AFTER_*` trigger events are not a transaction-end oracle; additional platform code units can still execute before `EXECUTION_FINISHED`.
