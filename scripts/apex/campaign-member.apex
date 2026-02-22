@@ -135,7 +135,7 @@ hasCritical = dmlStatementsPct >= 90 ||
   cpuTimePct >= 90 ||
   heapBytesPct >= 90;
 System.debug(
-  'CRANKY-LIMIT-BOT [' +
+  'LIMIT-BOT [' +
     checkpointLabel +
     '] :: DML statements ' +
     dmlStatementsUsed +
@@ -189,19 +189,19 @@ System.debug(
 );
 if (hasCritical) {
   System.debug(
-    'CRANKY-LIMIT-BOT ALERT [' +
+    'LIMIT-BOT ALERT [' +
       checkpointLabel +
       '] :: Critical threshold breached. Stop feeding this transaction extra automation.'
   );
 } else if (hasCaution) {
   System.debug(
-    'CRANKY-LIMIT-BOT WARNING [' +
+    'LIMIT-BOT WARNING [' +
       checkpointLabel +
       '] :: Usage above 70%. Salesforce governor limits are hard stops, not motivational posters.'
   );
 } else {
   System.debug(
-    'CRANKY-LIMIT-BOT STATUS [' +
+    'LIMIT-BOT STATUS [' +
       checkpointLabel +
       '] :: Resource draw is acceptable, reluctantly.'
   );
@@ -272,7 +272,7 @@ hasCritical = dmlStatementsPct >= 90 ||
   cpuTimePct >= 90 ||
   heapBytesPct >= 90;
 System.debug(
-  'CRANKY-LIMIT-BOT [' +
+  'LIMIT-BOT [' +
     checkpointLabel +
     '] :: DML statements ' +
     dmlStatementsUsed +
@@ -326,19 +326,19 @@ System.debug(
 );
 if (hasCritical) {
   System.debug(
-    'CRANKY-LIMIT-BOT ALERT [' +
+    'LIMIT-BOT ALERT [' +
       checkpointLabel +
       '] :: Critical threshold breached. Stop feeding this transaction extra automation.'
   );
 } else if (hasCaution) {
   System.debug(
-    'CRANKY-LIMIT-BOT WARNING [' +
+    'LIMIT-BOT WARNING [' +
       checkpointLabel +
       '] :: Usage above 70%. Salesforce governor limits are hard stops, not motivational posters.'
   );
 } else {
   System.debug(
-    'CRANKY-LIMIT-BOT STATUS [' +
+    'LIMIT-BOT STATUS [' +
       checkpointLabel +
       '] :: Resource draw is acceptable, reluctantly.'
   );
@@ -417,7 +417,7 @@ hasCritical = dmlStatementsPct >= 90 ||
   cpuTimePct >= 90 ||
   heapBytesPct >= 90;
 System.debug(
-  'CRANKY-LIMIT-BOT [' +
+  'LIMIT-BOT [' +
     checkpointLabel +
     '] :: DML statements ' +
     dmlStatementsUsed +
@@ -471,19 +471,19 @@ System.debug(
 );
 if (hasCritical) {
   System.debug(
-    'CRANKY-LIMIT-BOT ALERT [' +
+    'LIMIT-BOT ALERT [' +
       checkpointLabel +
       '] :: Critical threshold breached. Stop feeding this transaction extra automation.'
   );
 } else if (hasCaution) {
   System.debug(
-    'CRANKY-LIMIT-BOT WARNING [' +
+    'LIMIT-BOT WARNING [' +
       checkpointLabel +
       '] :: Usage above 70%. Salesforce governor limits are hard stops, not motivational posters.'
   );
 } else {
   System.debug(
-    'CRANKY-LIMIT-BOT STATUS [' +
+    'LIMIT-BOT STATUS [' +
       checkpointLabel +
       '] :: Resource draw is acceptable, reluctantly.'
   );
@@ -551,7 +551,7 @@ hasCritical = dmlStatementsPct >= 90 ||
   cpuTimePct >= 90 ||
   heapBytesPct >= 90;
 System.debug(
-  'CRANKY-LIMIT-BOT [' +
+  'LIMIT-BOT [' +
     checkpointLabel +
     '] :: DML statements ' +
     dmlStatementsUsed +
@@ -605,23 +605,23 @@ System.debug(
 );
 if (hasCritical) {
   System.debug(
-    'CRANKY-LIMIT-BOT ALERT [' +
+    'LIMIT-BOT ALERT [' +
       checkpointLabel +
       '] :: Critical threshold breached. Stop feeding this transaction extra automation.'
   );
 } else if (hasCaution) {
   System.debug(
-    'CRANKY-LIMIT-BOT WARNING [' +
+    'LIMIT-BOT WARNING [' +
       checkpointLabel +
       '] :: Usage above 70%. Salesforce governor limits are hard stops, not motivational posters.'
   );
 } else {
   System.debug(
-    'CRANKY-LIMIT-BOT STATUS [' +
+    'LIMIT-BOT STATUS [' +
       checkpointLabel +
       '] :: Resource draw is acceptable, reluctantly.'
   );
 }
 System.debug(
-  'CRANKY-LIMIT-BOT COMPLETE :: Upsert complete for Account, Contact, 2 Campaigns, Opportunity, 2 CampaignMembers, and OpportunityContactRole. Platform limits remain under surveillance.'
+  'LIMIT-BOT COMPLETE :: Upsert complete for Account, Contact, 2 Campaigns, Opportunity, 2 CampaignMembers, and OpportunityContactRole. Platform limits remain under surveillance.'
 );
