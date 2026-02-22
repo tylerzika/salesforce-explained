@@ -44,6 +44,11 @@ public with sharing class TriggerEventLogger {
   }
 
   public static void log(String objectName, String eventName) {
+    // Example: inspect the execution origin for this transaction.
+    System.Quiddity executionOrigin = Request.getCurrent().getQuiddity();
+    String executionOriginName = String.valueOf(executionOrigin);
+    System.debug(LoggingLevel.INFO, 'Execution Context started by ' + executionOriginName);
+
     incrementLogCalls();
     Integer objectCalls = incrementLogCallsForObject(objectName);
 
