@@ -32,6 +32,25 @@ different code paths, same transaction.
 Sign-off script split:
 - `scripts/apex/campaign-member.apex` creates/updates records.
 - `scripts/apex/campaign-member-cleanup.apex` deletes those records for a clean rerun.
+- `scripts/apex/campaign-member-limit-bot.apex` intentionally exceeds one governor limit to stress test the same transaction model.
+
+## Governor Limit Chaos Run
+
+Use the chaos harness when you want LIMIT-BOT to intentionally cross a hard governor boundary.
+
+1. Open `scripts/apex/campaign-member-limit-bot.apex` and set `limitMode` to one of:
+   - `SOQL_QUERIES`
+   - `DML_STATEMENTS`
+   - `DML_ROWS`
+2. Run:
+
+```bash
+HOME=/tmp SF_USE_GENERIC_UNIX_KEYCHAIN=true sf apex run \
+  --target-org <your-org-alias> \
+  --file scripts/apex/campaign-member-limit-bot.apex
+```
+
+Expected result: `System.LimitException` and rollback of that anonymous transaction.
 
 ## TAOCP + SICP Easter Eggs
 
