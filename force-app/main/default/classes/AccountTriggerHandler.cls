@@ -5,13 +5,28 @@ public with sharing class AccountTriggerHandler {
   // once and avoiding queries in per-record loops.
   // Role prep (Solution Architect): keep domain logic in handlers and keep
   // triggers as orchestration points only.
+  // Transaction-scoped run-once guards to prevent repeated handler execution
+  // in recursive trigger scenarios.
+  private static Boolean hasRunBeforeInsertUpdate = false;
+  private static Boolean hasRunAfterInsertUpdate = false;
+
   public static void handleBeforeInsertUpdate(List<Account> newAccounts) {
+    if (hasRunBeforeInsertUpdate) {
+      return;
+    }
+    hasRunBeforeInsertUpdate = true;
+
     for (Account accountRecord : newAccounts) {
       TriggerEventLogger.log('Account', buildBeforeEventName(accountRecord));
     }
   }
 
   public static void handleAfterInsertUpdate(List<Account> newAccounts, Map<Id, Account> oldAccountMap) {
+    if (hasRunAfterInsertUpdate) {
+      return;
+    }
+    hasRunAfterInsertUpdate = true;
+
     for (Account accountRecord : newAccounts) {
       String oldRevenue = (oldAccountMap != null && oldAccountMap.containsKey(accountRecord.Id))
         ? String.valueOf(oldAccountMap.get(accountRecord.Id).AnnualRevenue)

@@ -62,6 +62,11 @@ private class AccountTriggerHandlerTest {
     return eventName.substring(valueStart, nextTokenMarker);
   }
 
+  @testSetup
+  static void seedData() {
+    insert buildAccount('ACCT-TDD-SEED-UPDATE-001', 'SeedForUpdate', 1000);
+  }
+
   @isTest
   static void insertEmitsExpectedAccountEvents() {
     // Insert path verifies both trigger-level and handler-level instrumentation.
@@ -118,8 +123,14 @@ private class AccountTriggerHandlerTest {
   @isTest
   static void updateCapturesOldAndNewRevenue() {
     // Transition assertions protect revenue logic against silent regressions.
-    Account accountRecord = buildAccount('ACCT-TDD-UPDATE-001', 'TddUpdate', 1000);
-    insert accountRecord;
+    Account accountRecord = [
+      SELECT
+        Id,
+        AnnualRevenue
+      FROM Account
+      WHERE External_ID__c = 'ACCT-TDD-SEED-UPDATE-001'
+      LIMIT 1
+    ];
 
     TriggerEventLogger.resetCapturedEvents();
 
@@ -212,7 +223,7 @@ private class AccountTriggerHandlerTest {
 
   @isTest
   static void afterInsertDoesNotMeanTransactionHasEnded() {
-    // Companion proof: AFTER_* for one DML unit can be followed by more work.
+    // Run-once guard proof: trigger-level events continue, handler events do not repeat.
     TriggerEventLogger.resetCapturedEvents();
 
     Account accountRecord = buildAccount('ACCT-TDD-NOT-END-001', 'NotTheEnd', 1100);
@@ -222,7 +233,21 @@ private class AccountTriggerHandlerTest {
     update accountRecord;
 
     List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
-    System.assertEquals(8, events.size(), 'Insert + update in one method should emit 8 Account events.');
+    System.assertEquals(
+      6,
+      events.size(),
+      'Insert + update in one method should emit 6 events with run-once handler guards.'
+    );
+    System.assertEquals(
+      0,
+      countEventsByPrefix(events, 'BEFORE_BEFORE_UPDATE_id='),
+      'Expected before-update handler event to be skipped after first handler invocation.'
+    );
+    System.assertEquals(
+      0,
+      countEventsByPrefix(events, 'AFTER_AFTER_UPDATE_id='),
+      'Expected after-update handler event to be skipped after first handler invocation.'
+    );
 
     Integer afterInsertIndex = -1;
     Integer beforeUpdateIndex = -1;
