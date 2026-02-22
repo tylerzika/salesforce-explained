@@ -47,6 +47,21 @@ Literal page nods were added as easter eggs and are edition-sensitive:
 - TAOCP Vol. 1 p.1
 - SICP p.1
 
+## Role Prep Notes (In-Code)
+
+Comments in the trigger stack now include role-oriented cues:
+
+- `force-app/main/default/classes/TriggerEventLogger.cls`
+  Focus: transaction-scoped state, lightweight logging, recursion diagnostics.
+- `force-app/main/default/classes/TriggerContextInspector.cls`
+  Focus: structured telemetry and observability contract boundaries.
+- `force-app/main/default/classes/AccountTriggerHandler.cls`
+  Focus: bulk safety, orchestration separation, transition-aware domain logging.
+- `force-app/main/default/classes/AccountTriggerHandlerTest.cls`
+  Focus: behavior contracts and bulk regression coverage.
+- `scripts/apex/campaign-member.apex`
+  Focus: idempotent seed data and lead-to-revenue object graph literacy.
+
 ## Test-Driven Development in This Repo
 
 Use this trigger architecture as a TDD lab:

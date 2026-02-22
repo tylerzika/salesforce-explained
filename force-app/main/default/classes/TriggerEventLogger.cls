@@ -8,6 +8,10 @@ public with sharing class TriggerEventLogger {
   // not global state across all time.
   // Transaction-scoped state: this value persists across all trigger/code-unit
   // invocations inside one Apex execution context, then resets next transaction.
+  // Role prep (Platform Engineer): use transaction-local statics for recursion
+  // guards and diagnostic counters, not as durable storage.
+  // Role prep (Solution Architect): define a shared logging contract so every
+  // domain trigger emits comparable telemetry.
   private static Integer logCalls = 0;
 
   @TestVisible
@@ -20,6 +24,7 @@ public with sharing class TriggerEventLogger {
   }
 
   public static void incrementLogCalls() {
+    // Keep logger side effects lightweight: no SOQL, no DML, no callouts.
     logCalls++;
     System.debug(
       LoggingLevel.INFO,
@@ -30,6 +35,7 @@ public with sharing class TriggerEventLogger {
   public static void log(String objectName, String eventName) {
     incrementLogCalls();
 
+    // Platform habit: turn runtime context into structured data first, then log.
     Map<String, Object> payload = TriggerContextInspector.snapshot(
       objectName,
       eventName

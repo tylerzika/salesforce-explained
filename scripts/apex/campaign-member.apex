@@ -4,6 +4,10 @@
 // in one execution context (anonymous Apex transaction).
 // TAOCP easter egg: one transaction, many operations, one evolving state table.
 // SICP easter egg: the data model is the abstraction boundary; DML is the evaluator.
+// Role prep (Platform Engineer now): treat this file as an idempotent seed
+// script for repeatable debugging and demo scenarios.
+// Role prep (Solution Architect in 2 years): this object graph models core
+// lead-to-revenue entities and their attribution links.
 
 String accExID = 'ACCT-NIMBUS-ROASTERS-001';
 String conExID = 'CONT-MAYA-PATEL-001';
@@ -54,6 +58,7 @@ Opportunity opp = new Opportunity(
 // TriggerEventLogger.logCalls (a class static) keeps incrementing through all
 // these trigger invocations because they run in the same transaction.
 // Literal page nods (edition-sensitive): TAOCP Vol. 1 p.1, SICP p.1.
+// Integration mindset: External_ID__c-based upserts make reruns deterministic.
 upsert a External_ID__c;
 upsert c External_ID__c;
 upsert camp1 External_ID__c;

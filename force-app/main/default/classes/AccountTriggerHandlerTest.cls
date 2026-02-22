@@ -1,5 +1,9 @@
 @isTest
 private class AccountTriggerHandlerTest {
+  // Role prep (Platform Engineer): tests should assert behavior contracts, not
+  // implementation details, so refactors remain safe.
+  // Role prep (Solution Architect): this suite is the executable specification
+  // for Account trigger semantics and observability.
   private static Account buildAccount(
     String externalId,
     String name,
@@ -83,6 +87,7 @@ private class AccountTriggerHandlerTest {
 
   @isTest
   static void insertEmitsExpectedAccountEvents() {
+    // Insert path verifies both trigger-level and handler-level instrumentation.
     TriggerEventLogger.resetCapturedEvents();
 
     insert buildAccount('ACCT-TDD-INSERT-001', 'TddInsert', 1500);
@@ -152,6 +157,7 @@ private class AccountTriggerHandlerTest {
 
   @isTest
   static void updateCapturesOldAndNewRevenue() {
+    // Transition assertions protect revenue logic against silent regressions.
     Account accountRecord = buildAccount(
       'ACCT-TDD-UPDATE-001',
       'TddUpdate',
@@ -187,6 +193,7 @@ private class AccountTriggerHandlerTest {
 
   @isTest
   static void bulkInsertRemainsBulkified() {
+    // Bulk tests are your governor-limit safety net.
     TriggerEventLogger.resetCapturedEvents();
 
     insert new List<Account>{
