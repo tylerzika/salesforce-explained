@@ -29,6 +29,10 @@ In `scripts/apex/campaign-member.apex`, the cast is a representative Agentforce 
 This is why the log showed `logCalls` climbing across different triggers:
 different code paths, same transaction.
 
+Sign-off script split:
+- `scripts/apex/campaign-member.apex` creates/updates records.
+- `scripts/apex/campaign-member-cleanup.apex` deletes those records for a clean rerun.
+
 ## TAOCP + SICP Easter Eggs
 
 The codebase now includes small references that map classic CS texts to Apex trigger reality:

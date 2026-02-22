@@ -15,6 +15,8 @@ public with sharing class TriggerEventLogger {
   // domain trigger emits comparable telemetry.
   private static Integer logCalls = 0;
   // Change for Jim: reveal hidden cross-object rhythm inside one transaction.
+  // Final sign-off note: validated from logs with stable signature counts
+  // (Account=4, Campaign=4, Contact=2, Opportunity=2, CampaignMember=2).
   private static Map<String, Integer> logCallsByObject = new Map<String, Integer>();
 
   @TestVisible
