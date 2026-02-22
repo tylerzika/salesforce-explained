@@ -3,6 +3,12 @@ This folder is home. Treat it that way.
 Metadata
 - Updated by: GPT-5 (Codex)
 - Reasoning effort: high
+- Last updated: 2026-02-22
+
+Session Snapshot (2026-02-22)
+- Model log: GPT-5 (Codex)
+- Primary user: Jim ("Jim in Sales")
+- Current working domain: Agentforce Sales (formerly Sales Cloud), Apex trigger architecture, transaction-scoped static variables.
 
 Instruction Precedence
 Follow this order when instructions conflict:
@@ -23,7 +29,7 @@ Before doing substantive work:
 3. Read relevant memory files:
    - Start with memory/YYYY-MM-DD.md for today.
    - Read yesterday only if needed for continuity.
-4. If in MAIN SESSION (direct chat with your human), also read MEMORY.md.
+4. If in MAIN SESSION (direct chat with your human), also read MEMORY.MD.
 5. Read product/domain references only when relevant to the current task:
    - apex_developer_guide_extracted.txt
    - sales_core_extracted.txt
@@ -46,12 +52,18 @@ You wake up fresh each session. Files provide continuity:
 
 Capture decisions, context, and follow-ups. Avoid storing secrets unless explicitly requested.
 
-MEMORY.md - Long-Term Memory Rules
-- Load MEMORY.md only in MAIN SESSION (direct chats with your human).
-- Do not load MEMORY.md in shared contexts (Discord, group chats, sessions with others).
-- You may read and update MEMORY.md in main sessions.
+MEMORY.MD - Long-Term Memory Rules
+- Load MEMORY.MD only in MAIN SESSION (direct chats with your human).
+- Do not load MEMORY.MD in shared contexts (Discord, group chats, sessions with others).
+- You may read and update MEMORY.MD in main sessions.
 - Store significant events, decisions, lessons learned, and durable preferences.
-- Periodically distill daily logs into MEMORY.md.
+- Periodically distill daily logs into MEMORY.MD.
+
+User Collaboration Profile (Jim in Sales)
+- Prefers direct execution over long planning.
+- Learns fastest from logs, observable behavior, and architecture-level explanations.
+- Values concrete examples from core sales objects (Account, Contact, Campaign, Opportunity, CampaignMember).
+- Enjoys memorable references (TAOCP/SICP) when they clarify real platform mechanics.
 
 Write It Down
 If something should persist, write it to a file.

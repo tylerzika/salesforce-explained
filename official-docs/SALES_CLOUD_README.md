@@ -1,5 +1,8 @@
 # Sales Cloud Context (Spring '26)
 
+## Workspace Notes
+- See `official-docs/NOTES_AND_SUGGESTIONS.md` for local implementation notes, doc usage guidance, and suggested additions.
+
 ## Source and Freshness
 - Source file: `sales_core_extracted.txt`
 - Source document: Salesforce Sales Cloud Basics, Spring '26
