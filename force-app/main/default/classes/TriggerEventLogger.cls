@@ -1,6 +1,7 @@
 public with sharing class TriggerEventLogger {
   private static final String LOG_PREFIX = 'TRIGGER_EVENT';
   private static final String LOG_COUNTER_LABEL = 'logCalls=';
+  private static final String OBJECT_COUNTER_LABEL = 'objectCalls=';
 
   // Knuth lane marker: TAOCP Vol. 1 starts with program composition from
   // algorithms + data structures. Here, the structure is a class static counter.
@@ -13,6 +14,8 @@ public with sharing class TriggerEventLogger {
   // Role prep (Solution Architect): define a shared logging contract so every
   // domain trigger emits comparable telemetry.
   private static Integer logCalls = 0;
+  // Change for Jim: reveal hidden cross-object rhythm inside one transaction.
+  private static Map<String, Integer> logCallsByObject = new Map<String, Integer>();
 
   @TestVisible
   private static List<Map<String, Object>> capturedEvents = new List<Map<String, Object>>();
@@ -21,6 +24,7 @@ public with sharing class TriggerEventLogger {
   private static void resetCapturedEvents() {
     capturedEvents.clear();
     logCalls = 0;
+    logCallsByObject.clear();
   }
 
   public static void incrementLogCalls() {
@@ -32,8 +36,17 @@ public with sharing class TriggerEventLogger {
     );
   }
 
+  private static Integer incrementLogCallsForObject(String objectName) {
+    Integer objectCalls = logCallsByObject.containsKey(objectName)
+      ? logCallsByObject.get(objectName) + 1
+      : 1;
+    logCallsByObject.put(objectName, objectCalls);
+    return objectCalls;
+  }
+
   public static void log(String objectName, String eventName) {
     incrementLogCalls();
+    Integer objectCalls = incrementLogCallsForObject(objectName);
 
     // Platform habit: turn runtime context into structured data first, then log.
     Map<String, Object> payload = TriggerContextInspector.snapshot(
@@ -45,6 +58,15 @@ public with sharing class TriggerEventLogger {
       capturedEvents.add(payload);
     }
 
+    System.debug(
+      LoggingLevel.INFO,
+      LOG_PREFIX +
+        ' object=' +
+        objectName +
+        ' ' +
+        OBJECT_COUNTER_LABEL +
+        String.valueOf(objectCalls)
+    );
     System.debug(LoggingLevel.INFO, LOG_PREFIX + ' ' + JSON.serialize(payload));
   }
 }
