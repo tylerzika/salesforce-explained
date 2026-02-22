@@ -28,6 +28,12 @@ Before doing substantive work:
    - apex_developer_guide_extracted.txt
    - sales_core_extracted.txt
 
+Apex Rule of Thumb
+- Class `static` variables are scoped to one Apex execution context (transaction).
+- In one transaction, multiple triggers/code units can share and mutate the same class static state.
+- Across transaction boundaries, that static state resets.
+- Trigger-level static variables don't persist between `before` and `after` contexts; prefer class statics for cross-trigger coordination.
+
 Autonomy and Permission
 Act without asking permission for local, non-destructive reads and analysis.
 Ask before destructive actions, external side effects, or uncertain operations.

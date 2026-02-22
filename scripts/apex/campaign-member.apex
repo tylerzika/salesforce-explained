@@ -1,3 +1,8 @@
+// Agentforce Sales core data slice:
+// Account -> Contact -> Opportunity plus Campaign/CampaignMember attribution.
+// This script intentionally creates data that exercises multiple trigger paths
+// in one execution context (anonymous Apex transaction).
+
 String accExID = 'ACCT-NIMBUS-ROASTERS-001';
 String conExID = 'CONT-MAYA-PATEL-001';
 String campExID = 'CAMP-Q2-WEBINAR-2026-001';
@@ -43,6 +48,9 @@ Opportunity opp = new Opportunity(
     Account = new Account(External_ID__c = accExID)
 );
 
+// Each DML operation can fire before/after triggers.
+// TriggerEventLogger.logCalls (a class static) keeps incrementing through all
+// these trigger invocations because they run in the same transaction.
 upsert a External_ID__c;
 upsert c External_ID__c;
 upsert camp1 External_ID__c;
@@ -63,6 +71,7 @@ CampaignMember campaignMemberRecord2 = new CampaignMember(
     Contact = new Contact(External_ID__c = conExID)
 );
 
+// Bulk upsert of two members, so Trigger.new size is 2 in CampaignMember trigger.
 upsert new List<CampaignMember>{campaignMemberRecord, campaignMemberRecord2} External_ID__c;
 
 OpportunityContactRole oppConRole = new OpportunityContactRole(

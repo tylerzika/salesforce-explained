@@ -3,6 +3,32 @@
 Contains context for an agent or programmer in acquiring general Salesforce
 technical knowledge from a Software Engineering perspective.
 
+# Getting Started
+
+Create a Developer Sandbox from Trailhead. Make it your DevHub. Create a Scratch Org and deploy source with `sf project deploy start`
+
+## Story: The Nimbus Trigger Tour
+
+Think of one anonymous Apex run as one movie set.
+
+- `TriggerEventLogger.logCalls` is the clapboard counter.
+- Each trigger (`before insert`, `after insert`, per object) is a new scene.
+- The counter is `static`, so it keeps counting scenes in this same execution context.
+- When the movie ends (transaction boundary), the set is torn down and the counter resets.
+
+In `scripts/apex/campaign-member.apex`, the cast is a representative Agentforce Sales
+(Sales Cloud) core model:
+
+- `Account`: Nimbus Roasters
+- `Contact`: Maya Patel
+- `Opportunity`: Espresso Subscription Upgrade
+- `Campaign`: Q2 Webinar and Q3 Roundtable
+- `CampaignMember`: Maya responding to both campaigns
+- `OpportunityContactRole`: Maya as primary contact on the deal
+
+This is why the log showed `logCalls` climbing across different triggers:
+different code paths, same transaction.
+
 ## Test-Driven Development in This Repo
 
 Use this trigger architecture as a TDD lab:
@@ -15,9 +41,11 @@ Use this trigger architecture as a TDD lab:
 ### Current TDD Slice
 
 The first test slice is in:
+
 - `force-app/main/default/classes/AccountTriggerHandlerTest.cls`
 
 It characterizes current behavior for Account trigger flow:
+
 - Insert emits before/after trigger events and handler events.
 - Update logs old/new revenue transitions.
 - Bulk insert emits one trigger-level event per phase and one handler event per
