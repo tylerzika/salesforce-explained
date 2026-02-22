@@ -9,8 +9,5 @@ trigger CampaignMemberTrigger on CampaignMember(
 ) {
   // SICP stream wink: two members in one upsert still flow through one transaction.
   // Role prep: member-volume events are where bulk limits usually show up first.
-  TriggerEventLogger.log(
-    'CampaignMember',
-    String.valueOf(Trigger.operationType)
-  );
+  TriggerEventLogger.log('CampaignMember', String.valueOf(Trigger.operationType));
 }

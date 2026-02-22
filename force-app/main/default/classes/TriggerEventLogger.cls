@@ -34,16 +34,11 @@ public with sharing class TriggerEventLogger {
   public static void incrementLogCalls() {
     // Keep logger side effects lightweight: no SOQL, no DML, no callouts.
     logCalls++;
-    System.debug(
-      LoggingLevel.INFO,
-      LOG_PREFIX + ' ' + LOG_COUNTER_LABEL + String.valueOf(logCalls)
-    );
+    System.debug(LoggingLevel.INFO, LOG_PREFIX + ' ' + LOG_COUNTER_LABEL + String.valueOf(logCalls));
   }
 
   private static Integer incrementLogCallsForObject(String objectName) {
-    Integer objectCalls = logCallsByObject.containsKey(objectName)
-      ? logCallsByObject.get(objectName) + 1
-      : 1;
+    Integer objectCalls = logCallsByObject.containsKey(objectName) ? logCallsByObject.get(objectName) + 1 : 1;
     logCallsByObject.put(objectName, objectCalls);
     return objectCalls;
   }
@@ -53,10 +48,7 @@ public with sharing class TriggerEventLogger {
     Integer objectCalls = incrementLogCallsForObject(objectName);
 
     // Platform habit: turn runtime context into structured data first, then log.
-    Map<String, Object> payload = TriggerContextInspector.snapshot(
-      objectName,
-      eventName
-    );
+    Map<String, Object> payload = TriggerContextInspector.snapshot(objectName, eventName);
 
     if (Test.isRunningTest()) {
       // Test seam: expose counter state so invariants can be asserted directly.
@@ -67,12 +59,7 @@ public with sharing class TriggerEventLogger {
 
     System.debug(
       LoggingLevel.INFO,
-      LOG_PREFIX +
-        ' object=' +
-        objectName +
-        ' ' +
-        OBJECT_COUNTER_LABEL +
-        String.valueOf(objectCalls)
+      LOG_PREFIX + ' object=' + objectName + ' ' + OBJECT_COUNTER_LABEL + String.valueOf(objectCalls)
     );
     System.debug(LoggingLevel.INFO, LOG_PREFIX + ' ' + JSON.serialize(payload));
   }

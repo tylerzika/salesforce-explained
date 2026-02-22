@@ -11,19 +11,12 @@ public with sharing class AccountTriggerHandler {
     }
   }
 
-  public static void handleAfterInsertUpdate(
-    List<Account> newAccounts,
-    Map<Id, Account> oldAccountMap
-  ) {
+  public static void handleAfterInsertUpdate(List<Account> newAccounts, Map<Id, Account> oldAccountMap) {
     for (Account accountRecord : newAccounts) {
-      String oldRevenue = (oldAccountMap != null &&
-        oldAccountMap.containsKey(accountRecord.Id))
+      String oldRevenue = (oldAccountMap != null && oldAccountMap.containsKey(accountRecord.Id))
         ? String.valueOf(oldAccountMap.get(accountRecord.Id).AnnualRevenue)
         : 'null';
-      TriggerEventLogger.log(
-        'Account',
-        buildAfterEventName(accountRecord, oldRevenue)
-      );
+      TriggerEventLogger.log('Account', buildAfterEventName(accountRecord, oldRevenue));
     }
   }
 
@@ -38,10 +31,7 @@ public with sharing class AccountTriggerHandler {
       String.valueOf(accountRecord.Name);
   }
 
-  private static String buildAfterEventName(
-    Account accountRecord,
-    String oldRevenue
-  ) {
+  private static String buildAfterEventName(Account accountRecord, String oldRevenue) {
     // Architect mindset: include both previous and current values when the
     // business process depends on transitions, not just end state.
     return 'AFTER_' +

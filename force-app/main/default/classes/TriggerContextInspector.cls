@@ -6,10 +6,7 @@ public with sharing class TriggerContextInspector {
   // strings so tests and log parsers stay reliable.
   // Role prep (Solution Architect): this method is an observability boundary;
   // changes here can impact dashboards, alerting, and support runbooks.
-  public static Map<String, Object> snapshot(
-    String objectName,
-    String eventName
-  ) {
+  public static Map<String, Object> snapshot(String objectName, String eventName) {
     Map<String, Object> payload = new Map<String, Object>();
     payload.put('objectName', objectName);
     payload.put('eventName', eventName);

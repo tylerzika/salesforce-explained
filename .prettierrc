@@ -3,6 +3,13 @@
   "trailingComma": "none",
   "overrides": [
     {
+      "files": "**/*.{cls,trigger}",
+      "options": {
+        "parser": "apex",
+        "printWidth": 120
+      }
+    },
+    {
       "files": "**/lwc/**/*.html",
       "options": { "parser": "lwc" }
     },

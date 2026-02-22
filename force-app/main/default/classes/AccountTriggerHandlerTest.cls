@@ -4,22 +4,11 @@ private class AccountTriggerHandlerTest {
   // implementation details, so refactors remain safe.
   // Role prep (Solution Architect): this suite is the executable specification
   // for Account trigger semantics and observability.
-  private static Account buildAccount(
-    String externalId,
-    String name,
-    Decimal annualRevenue
-  ) {
-    return new Account(
-      External_ID__c = externalId,
-      Name = name,
-      AnnualRevenue = annualRevenue
-    );
+  private static Account buildAccount(String externalId, String name, Decimal annualRevenue) {
+    return new Account(External_ID__c = externalId, Name = name, AnnualRevenue = annualRevenue);
   }
 
-  private static Map<String, Object> findEventByName(
-    List<Map<String, Object>> events,
-    String eventName
-  ) {
+  private static Map<String, Object> findEventByName(List<Map<String, Object>> events, String eventName) {
     for (Map<String, Object> eventPayload : events) {
       if (((String) eventPayload.get('eventName')) == eventName) {
         return eventPayload;
@@ -29,10 +18,7 @@ private class AccountTriggerHandlerTest {
     return null;
   }
 
-  private static Map<String, Object> findEventByPrefix(
-    List<Map<String, Object>> events,
-    String eventNamePrefix
-  ) {
+  private static Map<String, Object> findEventByPrefix(List<Map<String, Object>> events, String eventNamePrefix) {
     for (Map<String, Object> eventPayload : events) {
       if (((String) eventPayload.get('eventName')).startsWith(eventNamePrefix)) {
         return eventPayload;
@@ -42,10 +28,7 @@ private class AccountTriggerHandlerTest {
     return null;
   }
 
-  private static Integer countEventsByName(
-    List<Map<String, Object>> events,
-    String eventName
-  ) {
+  private static Integer countEventsByName(List<Map<String, Object>> events, String eventName) {
     Integer countValue = 0;
     for (Map<String, Object> eventPayload : events) {
       if (((String) eventPayload.get('eventName')) == eventName) {
@@ -55,10 +38,7 @@ private class AccountTriggerHandlerTest {
     return countValue;
   }
 
-  private static Integer countEventsByPrefix(
-    List<Map<String, Object>> events,
-    String eventNamePrefix
-  ) {
+  private static Integer countEventsByPrefix(List<Map<String, Object>> events, String eventNamePrefix) {
     Integer countValue = 0;
     for (Map<String, Object> eventPayload : events) {
       if (((String) eventPayload.get('eventName')).startsWith(eventNamePrefix)) {
@@ -71,10 +51,7 @@ private class AccountTriggerHandlerTest {
   private static String tokenValue(String eventName, String tokenName) {
     String tokenMarker = tokenName + '=';
     Integer markerIndex = eventName.indexOf(tokenMarker);
-    System.assert(
-      markerIndex >= 0,
-      'Expected token marker not found: ' + tokenMarker + ' in ' + eventName
-    );
+    System.assert(markerIndex >= 0, 'Expected token marker not found: ' + tokenMarker + ' in ' + eventName);
 
     Integer valueStart = markerIndex + tokenMarker.length();
     Integer nextTokenMarker = eventName.indexOf('_', valueStart);
@@ -95,10 +72,7 @@ private class AccountTriggerHandlerTest {
     List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
     System.assertEquals(4, events.size(), 'Insert should emit 4 Account events.');
 
-    Map<String, Object> beforeInsertTriggerEvent = findEventByName(
-      events,
-      'BEFORE_INSERT'
-    );
+    Map<String, Object> beforeInsertTriggerEvent = findEventByName(events, 'BEFORE_INSERT');
     System.assertEquals(
       'Account',
       (String) beforeInsertTriggerEvent.get('objectName'),
@@ -119,30 +93,16 @@ private class AccountTriggerHandlerTest {
       (Boolean) beforeInsertTriggerEvent.get('isInsert'),
       'Expected BEFORE_INSERT event to report insert context.'
     );
-    System.assertEquals(
-      1,
-      (Integer) beforeInsertTriggerEvent.get('newSize'),
-      'Expected Trigger.new size of 1.'
-    );
-    System.assertEquals(
-      0,
-      (Integer) beforeInsertTriggerEvent.get('oldSize'),
-      'Expected Trigger.old size of 0.'
-    );
+    System.assertEquals(1, (Integer) beforeInsertTriggerEvent.get('newSize'), 'Expected Trigger.new size of 1.');
+    System.assertEquals(0, (Integer) beforeInsertTriggerEvent.get('oldSize'), 'Expected Trigger.old size of 0.');
 
-    Map<String, Object> beforeHandlerEvent = findEventByPrefix(
-      events,
-      'BEFORE_BEFORE_INSERT_id='
-    );
+    Map<String, Object> beforeHandlerEvent = findEventByPrefix(events, 'BEFORE_BEFORE_INSERT_id=');
     System.assert(
       ((String) beforeHandlerEvent.get('eventName')).contains('_name=TddInsert'),
       'Expected before-handler event to include the Account name.'
     );
 
-    Map<String, Object> afterHandlerEvent = findEventByPrefix(
-      events,
-      'AFTER_AFTER_INSERT_id='
-    );
+    Map<String, Object> afterHandlerEvent = findEventByPrefix(events, 'AFTER_AFTER_INSERT_id=');
     String afterInsertEventName = (String) afterHandlerEvent.get('eventName');
     System.assert(
       afterInsertEventName.contains('_oldRevenue=null_'),
@@ -158,11 +118,7 @@ private class AccountTriggerHandlerTest {
   @isTest
   static void updateCapturesOldAndNewRevenue() {
     // Transition assertions protect revenue logic against silent regressions.
-    Account accountRecord = buildAccount(
-      'ACCT-TDD-UPDATE-001',
-      'TddUpdate',
-      1000
-    );
+    Account accountRecord = buildAccount('ACCT-TDD-UPDATE-001', 'TddUpdate', 1000);
     insert accountRecord;
 
     TriggerEventLogger.resetCapturedEvents();
@@ -173,10 +129,7 @@ private class AccountTriggerHandlerTest {
     List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
     System.assertEquals(4, events.size(), 'Update should emit 4 Account events.');
 
-    Map<String, Object> afterUpdateHandlerEvent = findEventByPrefix(
-      events,
-      'AFTER_AFTER_UPDATE_id='
-    );
+    Map<String, Object> afterUpdateHandlerEvent = findEventByPrefix(events, 'AFTER_AFTER_UPDATE_id=');
     String afterUpdateEventName = (String) afterUpdateHandlerEvent.get('eventName');
 
     System.assertEquals(
@@ -202,21 +155,13 @@ private class AccountTriggerHandlerTest {
     };
 
     List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
-    System.assertEquals(
-      6,
-      events.size(),
-      'Bulk insert of 2 records should emit 6 events total.'
-    );
+    System.assertEquals(6, events.size(), 'Bulk insert of 2 records should emit 6 events total.');
     System.assertEquals(
       1,
       countEventsByName(events, 'BEFORE_INSERT'),
       'Expected one trigger-level BEFORE_INSERT event.'
     );
-    System.assertEquals(
-      1,
-      countEventsByName(events, 'AFTER_INSERT'),
-      'Expected one trigger-level AFTER_INSERT event.'
-    );
+    System.assertEquals(1, countEventsByName(events, 'AFTER_INSERT'), 'Expected one trigger-level AFTER_INSERT event.');
     System.assertEquals(
       2,
       countEventsByPrefix(events, 'BEFORE_BEFORE_INSERT_id='),
@@ -248,34 +193,16 @@ private class AccountTriggerHandlerTest {
       Integer globalCalls = (Integer) eventPayload.get('logCalls');
       Integer objectCalls = (Integer) eventPayload.get('objectCalls');
 
-      System.assertNotEquals(
-        null,
-        globalCalls,
-        'Expected logCalls counter in test payload.'
-      );
-      System.assertNotEquals(
-        null,
-        objectCalls,
-        'Expected objectCalls counter in test payload.'
-      );
-      System.assert(
-        globalCalls >= previousGlobalCalls,
-        'Expected non-decreasing global counter.'
-      );
-      System.assert(
-        objectCalls >= previousObjectCalls,
-        'Expected non-decreasing per-object counter.'
-      );
+      System.assertNotEquals(null, globalCalls, 'Expected logCalls counter in test payload.');
+      System.assertNotEquals(null, objectCalls, 'Expected objectCalls counter in test payload.');
+      System.assert(globalCalls >= previousGlobalCalls, 'Expected non-decreasing global counter.');
+      System.assert(objectCalls >= previousObjectCalls, 'Expected non-decreasing per-object counter.');
 
       previousGlobalCalls = globalCalls;
       previousObjectCalls = objectCalls;
     }
 
-    System.assertEquals(
-      events.size(),
-      previousGlobalCalls,
-      'Global counter should match number of emitted events.'
-    );
+    System.assertEquals(events.size(), previousGlobalCalls, 'Global counter should match number of emitted events.');
     System.assertEquals(
       events.size(),
       previousObjectCalls,
@@ -288,22 +215,14 @@ private class AccountTriggerHandlerTest {
     // Companion proof: AFTER_* for one DML unit can be followed by more work.
     TriggerEventLogger.resetCapturedEvents();
 
-    Account accountRecord = buildAccount(
-      'ACCT-TDD-NOT-END-001',
-      'NotTheEnd',
-      1100
-    );
+    Account accountRecord = buildAccount('ACCT-TDD-NOT-END-001', 'NotTheEnd', 1100);
     insert accountRecord;
 
     accountRecord.AnnualRevenue = 1900;
     update accountRecord;
 
     List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
-    System.assertEquals(
-      8,
-      events.size(),
-      'Insert + update in one method should emit 8 Account events.'
-    );
+    System.assertEquals(8, events.size(), 'Insert + update in one method should emit 8 Account events.');
 
     Integer afterInsertIndex = -1;
     Integer beforeUpdateIndex = -1;
