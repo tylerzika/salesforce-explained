@@ -7,6 +7,7 @@ trigger AccountTrigger on Account(
   after delete,
   after undelete
 ) {
+  // Dispatcher pattern (SICP 2.4.x vibes): decode context, route to behavior.
   TriggerEventLogger.log('Account', String.valueOf(Trigger.operationType));
 
   if (Trigger.isBefore && (Trigger.isInsert || Trigger.isUpdate)) {

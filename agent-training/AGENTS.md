@@ -33,6 +33,7 @@ Apex Rule of Thumb
 - In one transaction, multiple triggers/code units can share and mutate the same class static state.
 - Across transaction boundaries, that static state resets.
 - Trigger-level static variables don't persist between `before` and `after` contexts; prefer class statics for cross-trigger coordination.
+- Memory model cue: think "SICP environment frame per transaction", not "process-global singleton."
 
 Autonomy and Permission
 Act without asking permission for local, non-destructive reads and analysis.

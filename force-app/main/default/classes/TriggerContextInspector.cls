@@ -1,4 +1,7 @@
 public with sharing class TriggerContextInspector {
+  // SICP-flavored instrumentation: snapshot the "environment" (trigger context)
+  // so behavior can be reasoned about from data, not only from control flow.
+  // TAOCP-flavored note: this is our compact state table for one event.
   public static Map<String, Object> snapshot(
     String objectName,
     String eventName

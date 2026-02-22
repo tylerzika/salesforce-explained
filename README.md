@@ -29,6 +29,24 @@ In `scripts/apex/campaign-member.apex`, the cast is a representative Agentforce 
 This is why the log showed `logCalls` climbing across different triggers:
 different code paths, same transaction.
 
+## TAOCP + SICP Easter Eggs
+
+The codebase now includes small references that map classic CS texts to Apex trigger reality:
+
+- `force-app/main/default/classes/TriggerEventLogger.cls`:
+  class-static state as transaction-scoped memory (SICP environment model vibe).
+- `force-app/main/default/classes/TriggerContextInspector.cls`:
+  context snapshot as a compact state table (TAOCP instrumentation vibe).
+- `force-app/main/default/classes/AccountTriggerHandler.cls`:
+  helper extraction to keep side effects and composition separate.
+- `scripts/apex/campaign-member.apex`:
+  Agentforce Sales data slice with explicit transaction-semantics comments.
+
+Literal page nods were added as easter eggs and are edition-sensitive:
+
+- TAOCP Vol. 1 p.1
+- SICP p.1
+
 ## Test-Driven Development in This Repo
 
 Use this trigger architecture as a TDD lab:

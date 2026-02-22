@@ -2,6 +2,8 @@
 // Account -> Contact -> Opportunity plus Campaign/CampaignMember attribution.
 // This script intentionally creates data that exercises multiple trigger paths
 // in one execution context (anonymous Apex transaction).
+// TAOCP easter egg: one transaction, many operations, one evolving state table.
+// SICP easter egg: the data model is the abstraction boundary; DML is the evaluator.
 
 String accExID = 'ACCT-NIMBUS-ROASTERS-001';
 String conExID = 'CONT-MAYA-PATEL-001';
@@ -51,6 +53,7 @@ Opportunity opp = new Opportunity(
 // Each DML operation can fire before/after triggers.
 // TriggerEventLogger.logCalls (a class static) keeps incrementing through all
 // these trigger invocations because they run in the same transaction.
+// Literal page nods (edition-sensitive): TAOCP Vol. 1 p.1, SICP p.1.
 upsert a External_ID__c;
 upsert c External_ID__c;
 upsert camp1 External_ID__c;
@@ -72,6 +75,7 @@ CampaignMember campaignMemberRecord2 = new CampaignMember(
 );
 
 // Bulk upsert of two members, so Trigger.new size is 2 in CampaignMember trigger.
+// SICP 3.x wink: sequence matters because side effects (trigger logs) are observed.
 upsert new List<CampaignMember>{campaignMemberRecord, campaignMemberRecord2} External_ID__c;
 
 OpportunityContactRole oppConRole = new OpportunityContactRole(
