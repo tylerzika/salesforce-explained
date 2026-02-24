@@ -1,16 +1,43 @@
-// Agentforce Sales core data slice:
-// Account -> Contact -> Opportunity plus Campaign/CampaignMember attribution.
-// This script intentionally creates data that exercises multiple trigger paths
-// in one execution context (anonymous Apex transaction).
-// TAOCP easter egg: one transaction, many operations, one evolving state table.
-// SICP easter egg: the data model is the abstraction boundary; DML is the evaluator.
-// Role prep (Platform Engineer now): treat this file as an idempotent seed
-// script for repeatable debugging and demo scenarios.
-// Role prep (Solution Architect in 2 years): this object graph models core
-// lead-to-revenue entities and their attribution links.
-// Final sign-off: this file is now create/upsert only.
-// Teardown lives in scripts/apex/campaign-member-cleanup.apex.
+/* Example Anonymous Apex script
 
+Anonymous Apex & Apex Triggers example
+
+Running this script with Anonymous is one Execution Context. The script creates data from Agentforce Sales
+(Sales Cloud) core data model:
+
+- `Account`: Nimbus Roasters
+- `Contact`: Maya Patel
+- `Opportunity`: Espresso Subscription Upgrade
+- `Campaign`: Q2 Webinar and Q3 Roundtable
+- `CampaignMember`: Maya responding to both campaigns
+- `OpportunityContactRole`: Maya as primary contact on the deal
+
+When the account is upserted:
+
+- `AccountTrigger` begins.
+- `TriggerEventLogger.logCalls` is the clapboard counter.
+- Each trigger (`before insert`, `after insert`, per object) is a new scene.
+- The counter is `static`, so it keeps counting scenes in this same execution context. This is why the log showed `logCalls` climbing across different triggers:
+  different code paths, same transaction.
+- When the sript ends (transaction boundary), the counter resets.
+
+Technical notes:
+Agentforce Sales core data slice:
+Account -> Contact -> Opportunity plus Campaign/CampaignMember attribution.
+This script intentionally creates data that exercises multiple trigger paths
+in one execution context (anonymous Apex transaction).
+TAOCP easter egg: one transaction, many operations, one evolving state table.
+SICP easter egg: the data model is the abstraction boundary; DML is the evaluator.
+Role prep (Platform Engineer now): treat this file as an idempotent seed
+script for repeatable debugging and demo scenarios.
+Role prep (Solution Architect in 2 years): this object graph models core
+lead-to-revenue entities and their attribution links.
+Final sign-off: this file is now create/upsert only.
+Teardown lives in scripts/apex/campaign-member-cleanup.apex.
+
+TO DO:
+= [ ] Put debug styling in its own class.
+*/
 String accExID = 'ACCT-NIMBUS-ROASTERS-001';
 String conExID = 'CONT-MAYA-PATEL-001';
 String campExID = 'CAMP-Q2-WEBINAR-2026-001';
@@ -122,13 +149,15 @@ heapBytesPct = heapBytesLimit == 0 ? 0 : (heapBytesUsed * 100) / heapBytesLimit;
 heapBytesState = heapBytesPct >= 90
   ? 'RED-LINE'
   : heapBytesPct >= 70 ? 'YELLOW-LINE' : 'GREEN-LINE';
-hasCaution = dmlStatementsPct >= 70 ||
+hasCaution =
+  dmlStatementsPct >= 70 ||
   dmlRowsPct >= 70 ||
   soqlQueriesPct >= 70 ||
   soqlRowsPct >= 70 ||
   cpuTimePct >= 70 ||
   heapBytesPct >= 70;
-hasCritical = dmlStatementsPct >= 90 ||
+hasCritical =
+  dmlStatementsPct >= 90 ||
   dmlRowsPct >= 90 ||
   soqlQueriesPct >= 90 ||
   soqlRowsPct >= 90 ||
@@ -259,13 +288,15 @@ heapBytesPct = heapBytesLimit == 0 ? 0 : (heapBytesUsed * 100) / heapBytesLimit;
 heapBytesState = heapBytesPct >= 90
   ? 'RED-LINE'
   : heapBytesPct >= 70 ? 'YELLOW-LINE' : 'GREEN-LINE';
-hasCaution = dmlStatementsPct >= 70 ||
+hasCaution =
+  dmlStatementsPct >= 70 ||
   dmlRowsPct >= 70 ||
   soqlQueriesPct >= 70 ||
   soqlRowsPct >= 70 ||
   cpuTimePct >= 70 ||
   heapBytesPct >= 70;
-hasCritical = dmlStatementsPct >= 90 ||
+hasCritical =
+  dmlStatementsPct >= 90 ||
   dmlRowsPct >= 90 ||
   soqlQueriesPct >= 90 ||
   soqlRowsPct >= 90 ||
@@ -404,13 +435,15 @@ heapBytesPct = heapBytesLimit == 0 ? 0 : (heapBytesUsed * 100) / heapBytesLimit;
 heapBytesState = heapBytesPct >= 90
   ? 'RED-LINE'
   : heapBytesPct >= 70 ? 'YELLOW-LINE' : 'GREEN-LINE';
-hasCaution = dmlStatementsPct >= 70 ||
+hasCaution =
+  dmlStatementsPct >= 70 ||
   dmlRowsPct >= 70 ||
   soqlQueriesPct >= 70 ||
   soqlRowsPct >= 70 ||
   cpuTimePct >= 70 ||
   heapBytesPct >= 70;
-hasCritical = dmlStatementsPct >= 90 ||
+hasCritical =
+  dmlStatementsPct >= 90 ||
   dmlRowsPct >= 90 ||
   soqlQueriesPct >= 90 ||
   soqlRowsPct >= 90 ||
@@ -538,13 +571,15 @@ heapBytesPct = heapBytesLimit == 0 ? 0 : (heapBytesUsed * 100) / heapBytesLimit;
 heapBytesState = heapBytesPct >= 90
   ? 'RED-LINE'
   : heapBytesPct >= 70 ? 'YELLOW-LINE' : 'GREEN-LINE';
-hasCaution = dmlStatementsPct >= 70 ||
+hasCaution =
+  dmlStatementsPct >= 70 ||
   dmlRowsPct >= 70 ||
   soqlQueriesPct >= 70 ||
   soqlRowsPct >= 70 ||
   cpuTimePct >= 70 ||
   heapBytesPct >= 70;
-hasCritical = dmlStatementsPct >= 90 ||
+hasCritical =
+  dmlStatementsPct >= 90 ||
   dmlRowsPct >= 90 ||
   soqlQueriesPct >= 90 ||
   soqlRowsPct >= 90 ||

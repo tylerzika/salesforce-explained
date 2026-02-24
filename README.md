@@ -5,31 +5,14 @@ technical knowledge from a Software Engineering perspective.
 
 # Getting Started
 
-Create a Developer Sandbox from Trailhead. Make it your DevHub. Create a Scratch Org and deploy source with `sf project deploy start`
+Create a Developer Sandbox from Trailhead. Deploy via the Salesforce CLI. Scratch Org supported.
 
-## Story: The Nimbus Trigger Tour
+# Apex
 
-Think of one anonymous Apex run as one movie set.
-
-- `TriggerEventLogger.logCalls` is the clapboard counter.
-- Each trigger (`before insert`, `after insert`, per object) is a new scene.
-- The counter is `static`, so it keeps counting scenes in this same execution context.
-- When the movie ends (transaction boundary), the set is torn down and the counter resets.
-
-In `scripts/apex/campaign-member.apex`, the cast is a representative Agentforce Sales
-(Sales Cloud) core model:
-
-- `Account`: Nimbus Roasters
-- `Contact`: Maya Patel
-- `Opportunity`: Espresso Subscription Upgrade
-- `Campaign`: Q2 Webinar and Q3 Roundtable
-- `CampaignMember`: Maya responding to both campaigns
-- `OpportunityContactRole`: Maya as primary contact on the deal
-
-This is why the log showed `logCalls` climbing across different triggers:
-different code paths, same transaction.
+Salesforce's propritary programming language. A list off all ways it can run: APEX_EXECUTION_CONTEXT_TODO.md
 
 Sign-off script split:
+
 - `scripts/apex/campaign-member.apex` creates/updates records.
 - `scripts/apex/campaign-member-cleanup.apex` deletes those records for a clean rerun.
 - `scripts/apex/campaign-member-limit-bot.apex` intentionally exceeds one governor limit to stress test the same transaction model.
