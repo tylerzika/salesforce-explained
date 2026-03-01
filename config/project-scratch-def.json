@@ -1,7 +1,15 @@
 {
   "orgName": "Salesforce Explained",
-  "edition": "Developer",
-  "features": ["EnableSetPasswordInApi", "Einstein1AIPlatform"],
+  "edition": "Enterprise",
+  "features": [
+    "API",
+    "EnableSetPasswordInApi",
+    "Einstein1AIPlatform",
+    "GenericStreaming",
+    "IoT",
+    "LightningSalesConsole",
+    "SalesCloudEinstein"
+  ],
   "settings": {
     "lightningExperienceSettings": { "enableS1DesktopEnabled": true },
     "mobileSettings": { "enableS1EncryptedStoragePref2": false },
