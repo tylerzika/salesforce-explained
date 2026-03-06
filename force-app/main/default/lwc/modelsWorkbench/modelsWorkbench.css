@@ -1,0 +1,107 @@
+:host {
+  display: block;
+}
+
+.workbench {
+  background:
+    radial-gradient(circle at top right, #dff3f4 0, rgba(223, 243, 244, 0) 32%),
+    linear-gradient(180deg, #f6fbfb 0%, #eef2f8 100%);
+  border: 1px solid #d7dde8;
+  border-radius: 1.25rem;
+  padding: 1rem;
+}
+
+.hero {
+  align-items: start;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid #d7dde8;
+  border-radius: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.hero__copy-block {
+  max-width: 52rem;
+}
+
+.hero__eyebrow {
+  color: #0b5cab;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+}
+
+.hero__title {
+  color: #16325c;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.hero__copy,
+.hero__subcopy {
+  color: #3e4b5b;
+  margin: 0.5rem 0 0;
+}
+
+.hero__subcopy {
+  font-size: 0.92rem;
+}
+
+.hero__actions {
+  align-items: end;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.hero__count {
+  color: #54698d;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  margin-top: 1rem;
+}
+
+.empty-state {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid #d7dde8;
+  border-radius: 1rem;
+  color: #54698d;
+  margin-top: 1rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.empty-state__title {
+  color: #16325c;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.empty-state__copy {
+  margin: 0.5rem 0 0;
+}
+
+.empty-state__action {
+  margin-top: 1rem;
+}
+
+@media (max-width: 960px) {
+  .hero {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

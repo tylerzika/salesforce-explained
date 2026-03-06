@@ -1,0 +1,51 @@
+<template>
+  <section class="workbench">
+    <header class="hero">
+      <div class="hero__copy-block">
+        <p class="hero__eyebrow">Apex + LWC learning workbench</p>
+        <h1 class="hero__title">Add chat cards. Each card talks to its own LLM.</h1>
+        <p class="hero__copy">
+          This version is intentionally simpler: add or delete a card, choose a model, and keep each conversation inside that card.
+        </p>
+        <p class="hero__subcopy">
+          The model list excludes deprecated and embedding-only entries. Labels call out Salesforce Trust Boundary and Geo-aware routing where Salesforce documents them.
+        </p>
+      </div>
+
+      <div class="hero__actions">
+        <p class="hero__count">{cardCountLabel}</p>
+        <lightning-button
+          variant="brand"
+          label="Add card"
+          onclick={handleAddCard}
+        ></lightning-button>
+      </div>
+    </header>
+
+    <template lwc:if={hasCards}>
+      <div class="card-grid">
+        <template for:each={cards} for:item="card">
+          <c-models-chat-card
+            key={card.id}
+            card-id={card.id}
+            card-title={card.title}
+            ondeletecard={handleDeleteCard}
+          ></c-models-chat-card>
+        </template>
+      </div>
+    </template>
+    <template lwc:else>
+      <div class="empty-state">
+        <p class="empty-state__title">No cards are open.</p>
+        <p class="empty-state__copy">Add a card to start a fresh conversation with a selected model.</p>
+        <div class="empty-state__action">
+          <lightning-button
+            variant="brand"
+            label="Add first card"
+            onclick={handleAddCard}
+          ></lightning-button>
+        </div>
+      </div>
+    </template>
+  </section>
+</template>

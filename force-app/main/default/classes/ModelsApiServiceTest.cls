@@ -8,6 +8,7 @@ private class ModelsApiServiceTest {
     private String nextGenerationId;
     private String nextErrorCode;
     private String nextErrorMessage;
+    private String lastModelName;
 
     FakeModelsInvoker(Boolean shouldFail, String nextText, String nextGenerationId, String nextErrorCode, String nextErrorMessage) {
       this.shouldFail = shouldFail;
@@ -17,11 +18,16 @@ private class ModelsApiServiceTest {
       this.nextErrorMessage = nextErrorMessage;
     }
 
-    public override ModelsApiService.InvocationResult invokeGeneration(String promptText) {
+    public override ModelsApiService.InvocationResult invokeGeneration(String promptText, String modelName) {
+      lastModelName = modelName;
       return buildResult();
     }
 
-    public override ModelsApiService.InvocationResult invokeChatGeneration(List<ModelsApiService.MessageInput> messages) {
+    public override ModelsApiService.InvocationResult invokeChatGeneration(
+      List<ModelsApiService.MessageInput> messages,
+      String modelName
+    ) {
+      lastModelName = modelName;
       return buildResult();
     }
 
@@ -66,6 +72,23 @@ private class ModelsApiServiceTest {
     System.assertEquals(true, result.success, 'Expected successful chat generation.');
     System.assertEquals('Structured lead draft.', result.text, 'Expected text from the fake chat response.');
     System.assertEquals('chat-gen-001', result.generationId, 'Expected chat generation id to be mapped.');
+  }
+
+  @isTest
+  static void generateFromMessagesUsesChosenModelName() {
+    ModelsApiService.invoker = new FakeModelsInvoker(false, 'Structured lead draft.', 'chat-gen-002', null, null);
+
+    ModelsApiService.GenerationResult result = ModelsApiService.generateFromMessages(
+      new List<ModelsApiService.MessageInput>{
+        new ModelsApiService.MessageInput('system', 'Use only the supplied evidence.'),
+        new ModelsApiService.MessageInput('user', 'Draft a lead from the evidence packet.')
+      },
+      'sfdc_ai__DefaultGPT41'
+    );
+
+    FakeModelsInvoker fakeInvoker = (FakeModelsInvoker) ModelsApiService.invoker;
+    System.assertEquals('sfdc_ai__DefaultGPT41', fakeInvoker.lastModelName, 'Expected the selected model name to be forwarded.');
+    System.assertEquals('sfdc_ai__DefaultGPT41', result.modelName, 'Expected the selected model name in the result.');
   }
 
   @isTest

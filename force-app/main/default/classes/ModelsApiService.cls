@@ -56,8 +56,13 @@ public with sharing class ModelsApiService {
   // SICP easter egg: this is the beginning of a tiny domain language for Apex
   // inference work, where roles and messages are the primitive forms.
   public static GenerationResult generateFromMessages(List<MessageInput> messages) {
+    return generateFromMessages(messages, null);
+  }
+
+  public static GenerationResult generateFromMessages(List<MessageInput> messages, String modelName) {
     validateMessages(messages);
-    return toGenerationResult(invoker.invokeChatGeneration(messages));
+    String resolvedModelName = resolveModelName(modelName);
+    return toGenerationResult(invoker.invokeChatGeneration(messages, resolvedModelName), resolvedModelName);
   }
 
   // Keep the prompt helper because it is convenient for scripts and quick
@@ -65,14 +70,19 @@ public with sharing class ModelsApiService {
   // Think of this as a REPL-like entry point: useful for local exploration,
   // but not the strongest abstraction for larger systems.
   public static GenerationResult generateFromPrompt(String promptText) {
+    return generateFromPrompt(promptText, null);
+  }
+
+  public static GenerationResult generateFromPrompt(String promptText, String modelName) {
     if (String.isBlank(promptText)) {
       throw new ModelsApiServiceException('Prompt text is required.');
     }
 
-    return toGenerationResult(invoker.invokeGeneration(promptText));
+    String resolvedModelName = resolveModelName(modelName);
+    return toGenerationResult(invoker.invokeGeneration(promptText, resolvedModelName), resolvedModelName);
   }
 
-  private static GenerationResult toGenerationResult(InvocationResult invocationResult) {
+  private static GenerationResult toGenerationResult(InvocationResult invocationResult, String modelName) {
     GenerationResult result = new GenerationResult();
     // Symbolic transformation again: this method is a boundary where noisy
     // provider-specific response structure is compressed into one portable
@@ -80,10 +90,14 @@ public with sharing class ModelsApiService {
     result.success = invocationResult.success;
     result.text = invocationResult.text;
     result.generationId = invocationResult.generationId;
-    result.modelName = DEFAULT_MODEL_NAME;
+    result.modelName = modelName;
     result.errorCode = invocationResult.errorCode;
     result.errorMessage = invocationResult.errorMessage;
     return result;
+  }
+
+  private static String resolveModelName(String modelName) {
+    return String.isBlank(modelName) ? DEFAULT_MODEL_NAME : modelName.trim();
   }
 
   private static void validateMessages(List<MessageInput> messages) {
@@ -187,18 +201,26 @@ public with sharing class ModelsApiService {
 
   public virtual class ModelsInvoker {
     public virtual InvocationResult invokeGeneration(String promptText) {
+      return invokeGeneration(promptText, DEFAULT_MODEL_NAME);
+    }
+
+    public virtual InvocationResult invokeGeneration(String promptText, String modelName) {
       throw new ModelsApiServiceException('Models invoker not implemented.');
     }
 
     public virtual InvocationResult invokeChatGeneration(List<MessageInput> messages) {
+      return invokeChatGeneration(messages, DEFAULT_MODEL_NAME);
+    }
+
+    public virtual InvocationResult invokeChatGeneration(List<MessageInput> messages, String modelName) {
       throw new ModelsApiServiceException('Models invoker not implemented.');
     }
   }
 
   private class RuntimeModelsInvoker extends ModelsInvoker {
-    public override InvocationResult invokeGeneration(String promptText) {
+    public override InvocationResult invokeGeneration(String promptText, String modelName) {
       aiplatform.ModelsAPI.createGenerations_Request request = new aiplatform.ModelsAPI.createGenerations_Request();
-      request.modelName = DEFAULT_MODEL_NAME;
+      request.modelName = modelName;
 
       aiplatform.ModelsAPI_GenerationRequest requestBody = new aiplatform.ModelsAPI_GenerationRequest();
       requestBody.prompt = promptText;
@@ -218,9 +240,9 @@ public with sharing class ModelsApiService {
       }
     }
 
-    public override InvocationResult invokeChatGeneration(List<MessageInput> messages) {
+    public override InvocationResult invokeChatGeneration(List<MessageInput> messages, String modelName) {
       aiplatform.ModelsAPI.createChatGenerations_Request request = new aiplatform.ModelsAPI.createChatGenerations_Request();
-      request.modelName = DEFAULT_MODEL_NAME;
+      request.modelName = modelName;
 
       aiplatform.ModelsAPI_ChatGenerationsRequest requestBody = new aiplatform.ModelsAPI_ChatGenerationsRequest();
       requestBody.messages = new List<aiplatform.ModelsAPI_ChatMessageRequest>();

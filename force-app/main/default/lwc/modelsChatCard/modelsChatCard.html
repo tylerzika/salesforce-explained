@@ -1,0 +1,91 @@
+<template>
+  <article class="card">
+    <header class="card__header">
+      <div>
+        <p class="card__eyebrow">LLM card</p>
+        <h2 class="card__title">{cardTitle}</h2>
+      </div>
+      <lightning-button-icon
+        icon-name="utility:delete"
+        size="small"
+        variant="border-filled"
+        alternative-text="Delete card"
+        title="Delete card"
+        onclick={handleDeleteCard}
+      ></lightning-button-icon>
+    </header>
+
+    <div class="card__controls">
+      <lightning-combobox
+        name="model-picker"
+        label="Model"
+        value={selectedModel}
+        options={modelOptions}
+        onchange={handleModelChange}
+      ></lightning-combobox>
+
+      <div class="model-meta">
+        <p class="model-meta__name">{selectedModelLabel}</p>
+        <p class="model-meta__api">{selectedModel}</p>
+        <template lwc:if={selectedModelNote}>
+          <span class="model-meta__badge">{selectedModelNote}</span>
+        </template>
+      </div>
+    </div>
+
+    <template lwc:if={errorMessage}>
+      <div class="error-banner" role="alert">{errorMessage}</div>
+    </template>
+
+    <section class="transcript">
+      <template lwc:if={hasMessages}>
+        <ol class="transcript__list">
+          <template for:each={visibleMessages} for:item="message">
+            <li key={message.id} class={message.itemClass}>
+              <span class={message.roleClass}>{message.roleLabel}</span>
+              <p class="message__body">{message.content}</p>
+              <template lwc:if={message.meta}>
+                <p class="message__meta">{message.meta}</p>
+              </template>
+            </li>
+          </template>
+        </ol>
+      </template>
+      <template lwc:else>
+        <div class="transcript__empty">
+          Start a conversation in this card. The transcript stays local to this card only.
+        </div>
+      </template>
+    </section>
+
+    <div class="composer">
+      <label class="composer__label" for="prompt-input">Prompt</label>
+      <textarea
+        id="prompt-input"
+        class="composer__textarea slds-textarea"
+        value={draftMessage}
+        oninput={handleDraftChange}
+        onkeydown={handleKeydown}
+        disabled={isLoading}
+        placeholder="Ask this model to summarize, compare, explain, or draft."
+      ></textarea>
+
+      <div class="composer__footer">
+        <p class="composer__hint">Cmd/Ctrl + Enter sends this card's prompt.</p>
+        <lightning-button
+          variant="brand"
+          label="Send"
+          onclick={handleSend}
+          disabled={isSendDisabled}
+        ></lightning-button>
+      </div>
+    </div>
+
+    <template lwc:if={isLoading}>
+      <div class="loading-state">
+        <lightning-spinner alternative-text="Waiting for model" size="small"></lightning-spinner>
+        <p>Waiting for the selected model.</p>
+      </div>
+    </template>
+  </article>
+</template>
