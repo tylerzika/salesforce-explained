@@ -54,6 +54,27 @@ Literal page nods were added as easter eggs and are edition-sensitive:
 - SICP p.1
 - CLRS (3rd ed.) Ch.2 loop invariants (for proving logging/state properties)
 
+## Third Discipline: Symbolic Transformation
+
+There is now a third conceptual lane in this repo alongside the earlier TAOCP and
+SICP references:
+
+- `TAOCP`: representation, control, instrumentation, and measurable behavior.
+- `SICP`: abstraction barriers, composition, and execution-environment mental models.
+- `Symbolic Transformation`: shaping meaning-bearing text into operational structure.
+
+In older programming conversations this might have been dismissed as "string
+manipulation." With built-in LLM access in Apex, it becomes more serious:
+
+- prompts act like program inputs
+- schemas act like contracts
+- evidence packets act like structured symbolic payloads
+- model outputs become intermediate representations that Apex can validate,
+  route, reject, or persist
+
+The important shift is that text is no longer just presentation. In many flows
+it is now part of the computational substrate.
+
 ## Role Prep Notes (In-Code)
 
 Comments in the trigger stack now include role-oriented cues:
