@@ -3,10 +3,22 @@
     {
       "path": "force-app",
       "default": true
+    },
+    {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "path": "base",
+      "default": false,
+      "package": "base",
+      "versionDescription": ""
     }
   ],
   "name": "Salesforce Explained",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "65.0"
+  "sourceApiVersion": "65.0",
+  "packageAliases": {
+    "base": "0Hog70000000ip3CAA",
+    "base@0.1.0-1": "04tg7000000EQYvAAO"
+  }
 }
