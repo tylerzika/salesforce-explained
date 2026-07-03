@@ -16,6 +16,11 @@ public with sharing class TA_AccountRevenueLog implements
   private static Boolean hasRunBefore = false;
   private static Boolean hasRunAfter = false;
 
+  // Event names self-identify their emitter: REVLOG_ marks this action's
+  // breadcrumbs, and Trigger.operationType already carries the phase
+  // (BEFORE_INSERT, AFTER_UPDATE, ...) — no doubled BEFORE_BEFORE prefix.
+  private static final String EVENT_PREFIX = 'REVLOG_';
+
   public void beforeInsert(List<SObject> triggerNew) {
     handleBefore((List<Account>) triggerNew);
   }
@@ -60,7 +65,7 @@ public with sharing class TA_AccountRevenueLog implements
   // TAOCP easter egg: stable key order makes log scans feel like orderly runs.
   private static String buildBeforeEventName(Account accountRecord) {
     // Field-level breadcrumbs support quicker triage in production debugging.
-    return 'BEFORE_' +
+    return EVENT_PREFIX +
       String.valueOf(Trigger.operationType) +
       '_id=' +
       String.valueOf(accountRecord.Id) +
@@ -71,7 +76,7 @@ public with sharing class TA_AccountRevenueLog implements
   private static String buildAfterEventName(Account accountRecord, String oldRevenue) {
     // Architect mindset: include both previous and current values when the
     // business process depends on transitions, not just end state.
-    return 'AFTER_' +
+    return EVENT_PREFIX +
       String.valueOf(Trigger.operationType) +
       '_id=' +
       String.valueOf(accountRecord.Id) +

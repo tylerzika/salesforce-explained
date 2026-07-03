@@ -117,13 +117,13 @@ private class TA_AccountRevenueLogTest {
     System.assertEquals(1, (Integer) beforeInsertTelemetryEvent.get('newSize'), 'Expected Trigger.new size of 1.');
     System.assertEquals(0, (Integer) beforeInsertTelemetryEvent.get('oldSize'), 'Expected Trigger.old size of 0.');
 
-    Map<String, Object> beforeActionEvent = findEventByPrefix(events, 'BEFORE_BEFORE_INSERT_id=');
+    Map<String, Object> beforeActionEvent = findEventByPrefix(events, 'REVLOG_BEFORE_INSERT_id=');
     System.assert(
       ((String) beforeActionEvent.get('eventName')).contains('_name=TddInsert'),
       'Expected before-action event to include the Account name.'
     );
 
-    Map<String, Object> afterActionEvent = findEventByPrefix(events, 'AFTER_AFTER_INSERT_id=');
+    Map<String, Object> afterActionEvent = findEventByPrefix(events, 'REVLOG_AFTER_INSERT_id=');
     String afterInsertEventName = (String) afterActionEvent.get('eventName');
     System.assert(
       afterInsertEventName.contains('_oldRevenue=null_'),
@@ -139,7 +139,7 @@ private class TA_AccountRevenueLogTest {
     // Trigger_Action__mdt.Order__c = 10, TA_AccountRevenueLog at 20. Assert
     // the declared sequence so a careless metadata edit fails loudly here.
     System.assert(
-      firstIndexByPrefix(events, 'BEFORE_INSERT') < firstIndexByPrefix(events, 'BEFORE_BEFORE_INSERT_id='),
+      firstIndexByPrefix(events, 'BEFORE_INSERT') < firstIndexByPrefix(events, 'REVLOG_BEFORE_INSERT_id='),
       'Expected telemetry action (Order__c=10) to run before revenue action (Order__c=20).'
     );
   }
@@ -164,7 +164,7 @@ private class TA_AccountRevenueLogTest {
     List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
     System.assertEquals(4, events.size(), 'Update should emit 4 Account events.');
 
-    Map<String, Object> afterUpdateActionEvent = findEventByPrefix(events, 'AFTER_AFTER_UPDATE_id=');
+    Map<String, Object> afterUpdateActionEvent = findEventByPrefix(events, 'REVLOG_AFTER_UPDATE_id=');
     String afterUpdateEventName = (String) afterUpdateActionEvent.get('eventName');
 
     System.assertEquals(
@@ -201,12 +201,12 @@ private class TA_AccountRevenueLogTest {
     System.assertEquals(1, countEventsByName(events, 'AFTER_INSERT'), 'Expected one telemetry-action AFTER_INSERT event.');
     System.assertEquals(
       2,
-      countEventsByPrefix(events, 'BEFORE_BEFORE_INSERT_id='),
+      countEventsByPrefix(events, 'REVLOG_BEFORE_INSERT_id='),
       'Expected one before-action event per record.'
     );
     System.assertEquals(
       2,
-      countEventsByPrefix(events, 'AFTER_AFTER_INSERT_id='),
+      countEventsByPrefix(events, 'REVLOG_AFTER_INSERT_id='),
       'Expected one after-action event per record.'
     );
   }
@@ -268,12 +268,12 @@ private class TA_AccountRevenueLogTest {
     );
     System.assertEquals(
       0,
-      countEventsByPrefix(events, 'BEFORE_BEFORE_UPDATE_id='),
+      countEventsByPrefix(events, 'REVLOG_BEFORE_UPDATE_id='),
       'Expected before-update action event to be skipped after first action invocation.'
     );
     System.assertEquals(
       0,
-      countEventsByPrefix(events, 'AFTER_AFTER_UPDATE_id='),
+      countEventsByPrefix(events, 'REVLOG_AFTER_UPDATE_id='),
       'Expected after-update action event to be skipped after first action invocation.'
     );
 
@@ -302,7 +302,9 @@ private class TA_AccountRevenueLogTest {
     // no trigger context — construct it and call the interface method the way
     // MetadataTriggerHandler would.
     // Note: Trigger.operationType is null outside trigger context, so event
-    // names degrade to 'BEFORE_null_...' here; assert on the stable tokens.
+    // names degrade to 'REVLOG_null_...' here; assert on the stable tokens.
+    // With phase gone from the name, before-events are identified by shape:
+    // they never carry the _oldRevenue= token that after-events always do.
     TriggerEventLogger.resetCapturedEvents();
 
     List<Account> inMemoryAccounts = new List<Account>{
@@ -318,9 +320,14 @@ private class TA_AccountRevenueLogTest {
     List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
     System.assertEquals(2, events.size(), 'Run-once guard should limit direct calls to one event per record.');
     for (Map<String, Object> eventPayload : events) {
+      String eventName = (String) eventPayload.get('eventName');
       System.assert(
-        ((String) eventPayload.get('eventName')).startsWith('BEFORE_'),
-        'Expected only before-context events from direct beforeInsert calls.'
+        eventName.startsWith('REVLOG_'),
+        'Expected only revenue-action events from direct beforeInsert calls.'
+      );
+      System.assert(
+        !eventName.contains('_oldRevenue='),
+        'Expected before-shaped events (no revenue tokens) from direct beforeInsert calls.'
       );
     }
     System.assert(
@@ -350,12 +357,12 @@ private class TA_AccountRevenueLogTest {
     System.assertEquals(1, countEventsByName(events, 'AFTER_INSERT'), 'Expected telemetry AFTER_INSERT to survive bypass.');
     System.assertEquals(
       0,
-      countEventsByPrefix(events, 'BEFORE_BEFORE_INSERT_id='),
+      countEventsByPrefix(events, 'REVLOG_BEFORE_INSERT_id='),
       'Expected no before-action events while bypassed.'
     );
     System.assertEquals(
       0,
-      countEventsByPrefix(events, 'AFTER_AFTER_INSERT_id='),
+      countEventsByPrefix(events, 'REVLOG_AFTER_INSERT_id='),
       'Expected no after-action events while bypassed.'
     );
 
@@ -370,7 +377,7 @@ private class TA_AccountRevenueLogTest {
     System.assertEquals(4, events.size(), 'Post-bypass insert should emit all 4 Account events again.');
     System.assertEquals(
       1,
-      countEventsByPrefix(events, 'BEFORE_BEFORE_INSERT_id='),
+      countEventsByPrefix(events, 'REVLOG_BEFORE_INSERT_id='),
       'Expected the revenue action to resume after clearBypass.'
     );
   }
