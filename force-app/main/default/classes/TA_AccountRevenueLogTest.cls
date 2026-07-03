@@ -1,9 +1,15 @@
 @isTest
-private class AccountTriggerHandlerTest {
+private class TA_AccountRevenueLogTest {
+  // Executable specification for TA_AccountRevenueLog, the Trigger Actions
+  // Framework port of the retired AccountTriggerHandler.
   // Role prep (Platform Engineer): tests should assert behavior contracts, not
-  // implementation details, so refactors remain safe.
-  // Role prep (Solution Architect): this suite is the executable specification
-  // for Account trigger semantics and observability.
+  // implementation details, so refactors remain safe — this suite survived the
+  // handler-to-action rewrite precisely because it asserts emitted events.
+  // Role prep (Solution Architect): most tests run real DML so coverage
+  // exercises the whole pipeline (AccountTrigger → MetadataTriggerHandler →
+  // Trigger_Action__mdt rows → this action). Two tests poke the action class
+  // directly, proving the framework's core win over static handler methods:
+  // an action is a plain Apex object you can construct, call, and bypass.
   private static Account buildAccount(String externalId, String name, Decimal annualRevenue) {
     return new Account(External_ID__c = externalId, Name = name, AnnualRevenue = annualRevenue);
   }
@@ -48,6 +54,15 @@ private class AccountTriggerHandlerTest {
     return countValue;
   }
 
+  private static Integer firstIndexByPrefix(List<Map<String, Object>> events, String eventNamePrefix) {
+    for (Integer eventIndex = 0; eventIndex < events.size(); eventIndex++) {
+      if (((String) events[eventIndex].get('eventName')).startsWith(eventNamePrefix)) {
+        return eventIndex;
+      }
+    }
+    return -1;
+  }
+
   private static String tokenValue(String eventName, String tokenName) {
     String tokenMarker = tokenName + '=';
     Integer markerIndex = eventName.indexOf(tokenMarker);
@@ -69,7 +84,8 @@ private class AccountTriggerHandlerTest {
 
   @isTest
   static void insertEmitsExpectedAccountEvents() {
-    // Insert path verifies both trigger-level and handler-level instrumentation.
+    // Insert path verifies both telemetry-action and revenue-action
+    // instrumentation flowing through the metadata pipeline.
     TriggerEventLogger.resetCapturedEvents();
 
     insert buildAccount('ACCT-TDD-INSERT-001', 'TddInsert', 1500);
@@ -77,38 +93,38 @@ private class AccountTriggerHandlerTest {
     List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
     System.assertEquals(4, events.size(), 'Insert should emit 4 Account events.');
 
-    Map<String, Object> beforeInsertTriggerEvent = findEventByName(events, 'BEFORE_INSERT');
+    Map<String, Object> beforeInsertTelemetryEvent = findEventByName(events, 'BEFORE_INSERT');
     System.assertEquals(
       'Account',
-      (String) beforeInsertTriggerEvent.get('objectName'),
+      (String) beforeInsertTelemetryEvent.get('objectName'),
       'Expected Account objectName in payload.'
     );
     System.assertEquals(
       true,
-      (Boolean) beforeInsertTriggerEvent.get('isBefore'),
+      (Boolean) beforeInsertTelemetryEvent.get('isBefore'),
       'Expected BEFORE_INSERT event to be before-context.'
     );
     System.assertEquals(
       false,
-      (Boolean) beforeInsertTriggerEvent.get('isAfter'),
+      (Boolean) beforeInsertTelemetryEvent.get('isAfter'),
       'Expected BEFORE_INSERT event to not be after-context.'
     );
     System.assertEquals(
       true,
-      (Boolean) beforeInsertTriggerEvent.get('isInsert'),
+      (Boolean) beforeInsertTelemetryEvent.get('isInsert'),
       'Expected BEFORE_INSERT event to report insert context.'
     );
-    System.assertEquals(1, (Integer) beforeInsertTriggerEvent.get('newSize'), 'Expected Trigger.new size of 1.');
-    System.assertEquals(0, (Integer) beforeInsertTriggerEvent.get('oldSize'), 'Expected Trigger.old size of 0.');
+    System.assertEquals(1, (Integer) beforeInsertTelemetryEvent.get('newSize'), 'Expected Trigger.new size of 1.');
+    System.assertEquals(0, (Integer) beforeInsertTelemetryEvent.get('oldSize'), 'Expected Trigger.old size of 0.');
 
-    Map<String, Object> beforeHandlerEvent = findEventByPrefix(events, 'BEFORE_BEFORE_INSERT_id=');
+    Map<String, Object> beforeActionEvent = findEventByPrefix(events, 'BEFORE_BEFORE_INSERT_id=');
     System.assert(
-      ((String) beforeHandlerEvent.get('eventName')).contains('_name=TddInsert'),
-      'Expected before-handler event to include the Account name.'
+      ((String) beforeActionEvent.get('eventName')).contains('_name=TddInsert'),
+      'Expected before-action event to include the Account name.'
     );
 
-    Map<String, Object> afterHandlerEvent = findEventByPrefix(events, 'AFTER_AFTER_INSERT_id=');
-    String afterInsertEventName = (String) afterHandlerEvent.get('eventName');
+    Map<String, Object> afterActionEvent = findEventByPrefix(events, 'AFTER_AFTER_INSERT_id=');
+    String afterInsertEventName = (String) afterActionEvent.get('eventName');
     System.assert(
       afterInsertEventName.contains('_oldRevenue=null_'),
       'Expected after insert event to log null old revenue.'
@@ -117,6 +133,14 @@ private class AccountTriggerHandlerTest {
       1500,
       Decimal.valueOf(tokenValue(afterInsertEventName, 'newRevenue')),
       'Expected after insert event to log the new revenue.'
+    );
+
+    // Ordering is declared data, not code: TA_LogTriggerEvent runs at
+    // Trigger_Action__mdt.Order__c = 10, TA_AccountRevenueLog at 20. Assert
+    // the declared sequence so a careless metadata edit fails loudly here.
+    System.assert(
+      firstIndexByPrefix(events, 'BEFORE_INSERT') < firstIndexByPrefix(events, 'BEFORE_BEFORE_INSERT_id='),
+      'Expected telemetry action (Order__c=10) to run before revenue action (Order__c=20).'
     );
   }
 
@@ -140,8 +164,8 @@ private class AccountTriggerHandlerTest {
     List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
     System.assertEquals(4, events.size(), 'Update should emit 4 Account events.');
 
-    Map<String, Object> afterUpdateHandlerEvent = findEventByPrefix(events, 'AFTER_AFTER_UPDATE_id=');
-    String afterUpdateEventName = (String) afterUpdateHandlerEvent.get('eventName');
+    Map<String, Object> afterUpdateActionEvent = findEventByPrefix(events, 'AFTER_AFTER_UPDATE_id=');
+    String afterUpdateEventName = (String) afterUpdateActionEvent.get('eventName');
 
     System.assertEquals(
       1000,
@@ -157,7 +181,9 @@ private class AccountTriggerHandlerTest {
 
   @isTest
   static void bulkInsertRemainsBulkified() {
-    // Bulk tests are your governor-limit safety net.
+    // Bulk tests are your governor-limit safety net. The framework hands the
+    // action one full chunk per context, so per-record events must scale while
+    // per-context telemetry stays constant.
     TriggerEventLogger.resetCapturedEvents();
 
     insert new List<Account>{
@@ -170,18 +196,18 @@ private class AccountTriggerHandlerTest {
     System.assertEquals(
       1,
       countEventsByName(events, 'BEFORE_INSERT'),
-      'Expected one trigger-level BEFORE_INSERT event.'
+      'Expected one telemetry-action BEFORE_INSERT event.'
     );
-    System.assertEquals(1, countEventsByName(events, 'AFTER_INSERT'), 'Expected one trigger-level AFTER_INSERT event.');
+    System.assertEquals(1, countEventsByName(events, 'AFTER_INSERT'), 'Expected one telemetry-action AFTER_INSERT event.');
     System.assertEquals(
       2,
       countEventsByPrefix(events, 'BEFORE_BEFORE_INSERT_id='),
-      'Expected one before-handler event per record.'
+      'Expected one before-action event per record.'
     );
     System.assertEquals(
       2,
       countEventsByPrefix(events, 'AFTER_AFTER_INSERT_id='),
-      'Expected one after-handler event per record.'
+      'Expected one after-action event per record.'
     );
   }
 
@@ -223,7 +249,9 @@ private class AccountTriggerHandlerTest {
 
   @isTest
   static void afterInsertDoesNotMeanTransactionHasEnded() {
-    // Run-once guard proof: trigger-level events continue, handler events do not repeat.
+    // Run-once guard proof: telemetry-action events continue firing per
+    // context, but the revenue action's static guards stop repeat emissions
+    // within one execution context.
     TriggerEventLogger.resetCapturedEvents();
 
     Account accountRecord = buildAccount('ACCT-TDD-NOT-END-001', 'NotTheEnd', 1100);
@@ -236,17 +264,17 @@ private class AccountTriggerHandlerTest {
     System.assertEquals(
       6,
       events.size(),
-      'Insert + update in one method should emit 6 events with run-once handler guards.'
+      'Insert + update in one method should emit 6 events with run-once action guards.'
     );
     System.assertEquals(
       0,
       countEventsByPrefix(events, 'BEFORE_BEFORE_UPDATE_id='),
-      'Expected before-update handler event to be skipped after first handler invocation.'
+      'Expected before-update action event to be skipped after first action invocation.'
     );
     System.assertEquals(
       0,
       countEventsByPrefix(events, 'AFTER_AFTER_UPDATE_id='),
-      'Expected after-update handler event to be skipped after first handler invocation.'
+      'Expected after-update action event to be skipped after first action invocation.'
     );
 
     Integer afterInsertIndex = -1;
@@ -265,6 +293,85 @@ private class AccountTriggerHandlerTest {
     System.assert(
       beforeUpdateIndex > afterInsertIndex,
       'Expected more trigger activity after AFTER_INSERT in the same transaction.'
+    );
+  }
+
+  @isTest
+  static void directInvocationHonorsRunOnceGuard() {
+    // Framework payoff #1: a trigger action is a plain Apex object. No DML,
+    // no trigger context — construct it and call the interface method the way
+    // MetadataTriggerHandler would.
+    // Note: Trigger.operationType is null outside trigger context, so event
+    // names degrade to 'BEFORE_null_...' here; assert on the stable tokens.
+    TriggerEventLogger.resetCapturedEvents();
+
+    List<Account> inMemoryAccounts = new List<Account>{
+      buildAccount('ACCT-TDD-DIRECT-001', 'DirectOne', 300),
+      buildAccount('ACCT-TDD-DIRECT-002', 'DirectTwo', 400)
+    };
+
+    TA_AccountRevenueLog revenueAction = new TA_AccountRevenueLog();
+    revenueAction.beforeInsert(inMemoryAccounts);
+    // Second call must hit the transaction-scoped guard and emit nothing.
+    revenueAction.beforeInsert(inMemoryAccounts);
+
+    List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
+    System.assertEquals(2, events.size(), 'Run-once guard should limit direct calls to one event per record.');
+    for (Map<String, Object> eventPayload : events) {
+      System.assert(
+        ((String) eventPayload.get('eventName')).startsWith('BEFORE_'),
+        'Expected only before-context events from direct beforeInsert calls.'
+      );
+    }
+    System.assert(
+      ((String) events[0].get('eventName')).contains('_name=DirectOne'),
+      'Expected first direct event to carry the first Account name.'
+    );
+    System.assert(
+      ((String) events[1].get('eventName')).contains('_name=DirectTwo'),
+      'Expected second direct event to carry the second Account name.'
+    );
+  }
+
+  @isTest
+  static void metadataBypassSkipsOnlyTheRevenueAction() {
+    // Framework payoff #2: bypass is scoped to one action class, so telemetry
+    // from TA_LogTriggerEvent keeps flowing while revenue breadcrumbs pause.
+    // Solution Architect drill: this is the surgical off-switch you reach for
+    // during data migrations instead of a blunt "disable all triggers" flag.
+    MetadataTriggerHandler.bypass('TA_AccountRevenueLog');
+    TriggerEventLogger.resetCapturedEvents();
+
+    insert buildAccount('ACCT-TDD-BYPASS-001', 'BypassedInsert', 900);
+
+    List<Map<String, Object>> events = TriggerEventLogger.capturedEvents;
+    System.assertEquals(2, events.size(), 'Bypassed insert should emit telemetry-action events only.');
+    System.assertEquals(1, countEventsByName(events, 'BEFORE_INSERT'), 'Expected telemetry BEFORE_INSERT to survive bypass.');
+    System.assertEquals(1, countEventsByName(events, 'AFTER_INSERT'), 'Expected telemetry AFTER_INSERT to survive bypass.');
+    System.assertEquals(
+      0,
+      countEventsByPrefix(events, 'BEFORE_BEFORE_INSERT_id='),
+      'Expected no before-action events while bypassed.'
+    );
+    System.assertEquals(
+      0,
+      countEventsByPrefix(events, 'AFTER_AFTER_INSERT_id='),
+      'Expected no after-action events while bypassed.'
+    );
+
+    // Clearing the bypass restores the action. Its run-once guards are still
+    // untripped — the action never executed above — so the next insert logs.
+    MetadataTriggerHandler.clearBypass('TA_AccountRevenueLog');
+    TriggerEventLogger.resetCapturedEvents();
+
+    insert buildAccount('ACCT-TDD-BYPASS-002', 'RestoredInsert', 950);
+
+    events = TriggerEventLogger.capturedEvents;
+    System.assertEquals(4, events.size(), 'Post-bypass insert should emit all 4 Account events again.');
+    System.assertEquals(
+      1,
+      countEventsByPrefix(events, 'BEFORE_BEFORE_INSERT_id='),
+      'Expected the revenue action to resume after clearBypass.'
     );
   }
 }

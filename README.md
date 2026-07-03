@@ -103,14 +103,16 @@ Use this trigger architecture as a TDD lab:
 
 The first test slice is in:
 
-- `force-app/main/default/classes/AccountTriggerHandlerTest.cls`
+- `force-app/main/default/classes/TA_AccountRevenueLogTest.cls`
 
 It characterizes current behavior for Account trigger flow:
 
-- Insert emits before/after trigger events and handler events.
+- Insert emits before/after telemetry-action events and revenue-action events.
 - Update logs old/new revenue transitions.
-- Bulk insert emits one trigger-level event per phase and one handler event per
-  record.
+- Bulk insert emits one telemetry-action event per phase and one revenue-action
+  event per record.
+- Direct action invocation and `MetadataTriggerHandler.bypass` exercise the
+  Trigger Actions Framework seams without DML-only coupling.
 
 ### Testability Seam
 
@@ -125,7 +127,7 @@ Authenticate an org, then run:
 ```bash
 HOME=/tmp SF_USE_GENERIC_UNIX_KEYCHAIN=true sf apex run test \
   --target-org <your-org-alias> \
-  --tests AccountTriggerHandlerTest \
+  --tests TA_AccountRevenueLogTest \
   --result-format human \
   --code-coverage
 ```
