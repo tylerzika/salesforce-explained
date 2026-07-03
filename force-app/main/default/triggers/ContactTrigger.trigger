@@ -7,7 +7,7 @@ trigger ContactTrigger on Contact(
   after delete,
   after undelete
 ) {
-  // Minimal trigger, maximum signal: TAOCP style "measure first, optimize later."
-  // Role prep: keep non-Account objects on the same pattern for consistency.
-  TriggerEventLogger.log('Contact', String.valueOf(Trigger.operationType));
+  // One trigger per object, zero logic in the body: every behavior on Contact
+  // is a Trigger_Action__mdt record executed by the base package's pipeline.
+  new MetadataTriggerHandler().run();
 }

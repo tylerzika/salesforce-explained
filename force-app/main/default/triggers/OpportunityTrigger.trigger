@@ -7,7 +7,7 @@ trigger OpportunityTrigger on Opportunity(
   after delete,
   after undelete
 ) {
-  // Opportunity path: data and control travel together through one execution frame.
-  // Role prep: this stream is where forecast-impacting logic should stay observable.
-  TriggerEventLogger.log('Opportunity', String.valueOf(Trigger.operationType));
+  // One trigger per object, zero logic in the body: every behavior on Opportunity
+  // is a Trigger_Action__mdt record executed by the base package's pipeline.
+  new MetadataTriggerHandler().run();
 }

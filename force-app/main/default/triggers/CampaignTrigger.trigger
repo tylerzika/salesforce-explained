@@ -7,7 +7,7 @@ trigger CampaignTrigger on Campaign(
   after delete,
   after undelete
 ) {
-  // Campaign attribution path marker: this event feeds the same transaction log stream.
-  // Role prep: campaign-side telemetry helps attribution and pipeline explainability.
-  TriggerEventLogger.log('Campaign', String.valueOf(Trigger.operationType));
+  // One trigger per object, zero logic in the body: every behavior on Campaign
+  // is a Trigger_Action__mdt record executed by the base package's pipeline.
+  new MetadataTriggerHandler().run();
 }

@@ -7,7 +7,7 @@ trigger CampaignMemberTrigger on CampaignMember(
   after delete,
   after undelete
 ) {
-  // SICP stream wink: two members in one upsert still flow through one transaction.
-  // Role prep: member-volume events are where bulk limits usually show up first.
-  TriggerEventLogger.log('CampaignMember', String.valueOf(Trigger.operationType));
+  // One trigger per object, zero logic in the body: every behavior on CampaignMember
+  // is a Trigger_Action__mdt record executed by the base package's pipeline.
+  new MetadataTriggerHandler().run();
 }
