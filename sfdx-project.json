@@ -19,6 +19,7 @@
   "sourceApiVersion": "65.0",
   "packageAliases": {
     "base": "0Hog70000000ip3CAA",
-    "base@0.1.0-1": "04tg7000000EQYvAAO"
+    "base@0.1.0-1": "04tg7000000EQYvAAO",
+    "base@0.1.0-2": "04tg7000000EQaXAAW"
   }
 }
