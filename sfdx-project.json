@@ -15,10 +15,26 @@
     {
       "versionName": "ver 0.1",
       "versionNumber": "0.1.0.NEXT",
+      "path": "models",
+      "default": false,
+      "package": "models",
+      "versionDescription": "Models API (aiplatform) service wrapper; no package dependencies.",
+      "definitionFile": "config/project-scratch-def.json"
+    },
+    {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
       "path": "test-data-sales",
       "default": false,
       "package": "test-data-sales",
-      "versionDescription": "LLM-generated Sales Cloud test data; v1 covers Lead."
+      "versionDescription": "LLM-generated Sales Cloud test data; v1 covers Lead.",
+      "definitionFile": "config/project-scratch-def.json",
+      "dependencies": [
+        {
+          "package": "models",
+          "versionNumber": "0.1.0.LATEST"
+        }
+      ]
     }
   ],
   "name": "Salesforce Explained",
@@ -30,6 +46,9 @@
     "base@0.1.0-1": "04tg7000000EQYvAAO",
     "base@0.1.0-2": "04tg7000000EQaXAAW",
     "test-data-sales": "0Hog70000000nFFCAY",
-    "test-data-sales@0.1.0-1": "04tg7000000EbvlAAC"
+    "test-data-sales@0.1.0-1": "04tg7000000EbvlAAC",
+    "models": "0Hog70000000nGrCAI",
+    "models@0.1.0-1": "04tg7000000EbxNAAS",
+    "test-data-sales@0.1.0-2": "04tg7000000EbyzAAC"
   }
 }
