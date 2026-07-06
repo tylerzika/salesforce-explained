@@ -7,9 +7,31 @@ technical knowledge from a Software Engineering perspective.
 
 Create a Developer Sandbox from Trailhead. Deploy via the Salesforce CLI. Scratch Org supported.
 
+# Deployment Steps
+
+Install the unlocked packages first, then deploy the unpackaged learning
+assets. Order matters: `test-data-sales` depends on `models`, and `force-app`
+compiles against classes from both `base` and `models`.
+
+```bash
+sf org create scratch --definition-file config/project-scratch-def.json \
+  --alias scratchOrgName --set-default --duration-days 7 --wait 15
+
+sf package install -p base@0.1.0-2 -o scratchOrgName -w 10
+sf package install -p models@0.1.0-1 -o scratchOrgName -w 10
+sf package install -p test-data-sales@0.1.0-2 -o scratchOrgName -w 10
+
+sf project deploy start --source-dir force-app -o scratchOrgName
+```
+
+Current version aliases live in `sfdx-project.json` under `packageAliases`.
+The `models` package (ModelsApiService) requires the Einstein features from
+`config/project-scratch-def.json`; `test-data-sales` won't install without
+`models` already present.
+
 # Apex
 
-Salesforce's propritary programming language. A list off all ways it can run: APEX_EXECUTION_CONTEXT_TODO.md
+Salesforce's proprietary programming language. A list of all ways it can run: APEX_EXECUTION_CONTEXT_TODO.md
 
 Sign-off script split:
 
@@ -43,8 +65,10 @@ The codebase now includes small references that map classic CS texts to Apex tri
   class-static state as transaction-scoped memory (SICP environment model vibe).
 - `force-app/main/default/classes/TriggerContextInspector.cls`:
   context snapshot as a compact state table (TAOCP instrumentation vibe).
-- `force-app/main/default/classes/AccountTriggerHandler.cls`:
-  helper extraction to keep side effects and composition separate.
+- `force-app/main/default/classes/TA_AccountRevenueLog.cls`:
+  helper extraction to keep side effects and composition separate
+  (successor to the retired `AccountTriggerHandler` after the Trigger
+  Actions Framework migration).
 - `scripts/apex/campaign-member.apex`:
   Agentforce Sales data slice with explicit transaction-semantics comments.
 
@@ -83,9 +107,9 @@ Comments in the trigger stack now include role-oriented cues:
   Focus: transaction-scoped state, lightweight logging, recursion diagnostics.
 - `force-app/main/default/classes/TriggerContextInspector.cls`
   Focus: structured telemetry and observability contract boundaries.
-- `force-app/main/default/classes/AccountTriggerHandler.cls`
+- `force-app/main/default/classes/TA_AccountRevenueLog.cls`
   Focus: bulk safety, orchestration separation, transition-aware domain logging.
-- `force-app/main/default/classes/AccountTriggerHandlerTest.cls`
+- `force-app/main/default/classes/TA_AccountRevenueLogTest.cls`
   Focus: behavior contracts and bulk regression coverage.
 - `scripts/apex/campaign-member.apex`
   Focus: idempotent seed data and lead-to-revenue object graph literacy.
