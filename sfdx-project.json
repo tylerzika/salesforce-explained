@@ -28,6 +28,8 @@
   "packageAliases": {
     "base": "0Hog70000000ip3CAA",
     "base@0.1.0-1": "04tg7000000EQYvAAO",
-    "base@0.1.0-2": "04tg7000000EQaXAAW"
+    "base@0.1.0-2": "04tg7000000EQaXAAW",
+    "test-data-sales": "0Hog70000000nFFCAY",
+    "test-data-sales@0.1.0-1": "04tg7000000EbvlAAC"
   }
 }
