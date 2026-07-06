@@ -1,0 +1,13 @@
+<aura:component
+  implements="force:lightningQuickActionWithoutHeader,force:hasSObjectName"
+  access="global"
+>
+  <!--
+    List-view adapter only. This exists because a custom List Button can target
+    an Aura Lightning Component but not an LWC directly. It carries no logic: it
+    hosts c:createTestLead with autoRun so the Lead list view stays one-click,
+    then refreshes the view and closes itself when the LWC reports it finished.
+  -->
+  <aura:attribute name="autoRun" type="Boolean" default="true" access="private" />
+  <c:createTestLead autoRun="{!v.autoRun}" onfinished="{!c.handleFinished}" />
+</aura:component>

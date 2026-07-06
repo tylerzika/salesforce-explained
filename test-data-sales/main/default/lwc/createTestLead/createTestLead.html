@@ -1,0 +1,21 @@
+<template>
+  <lightning-card title={cardTitle} icon-name="standard:lead">
+    <div class="slds-p-horizontal_small slds-p-bottom_small">
+      <lightning-button
+        variant="brand"
+        label="Create Test Lead"
+        title="Generate a realistic lead with AI and insert it"
+        onclick={handleClick}
+        disabled={buttonDisabled}
+      ></lightning-button>
+
+      <template lwc:if={isWorking}>
+        <lightning-spinner alternative-text="Generating lead" size="small"></lightning-spinner>
+      </template>
+
+      <template lwc:if={message}>
+        <p class={messageClass}>{message}</p>
+      </template>
+    </div>
+  </lightning-card>
+</template>

@@ -11,6 +11,14 @@
       "default": false,
       "package": "base",
       "versionDescription": ""
+    },
+    {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "path": "test-data-sales",
+      "default": false,
+      "package": "test-data-sales",
+      "versionDescription": "LLM-generated Sales Cloud test data; v1 covers Lead."
     }
   ],
   "name": "Salesforce Explained",
