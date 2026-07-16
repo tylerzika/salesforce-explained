@@ -1,0 +1,23 @@
+{
+  "orgName": "Salesforce Explained",
+  "edition": "Enterprise",
+  "features": [
+    "API",
+    "EnableSetPasswordInApi",
+    "Einstein1AIPlatform",
+    "GenericStreaming",
+    "IoT",
+    "LightningSalesConsole",
+    "SalesCloudEinstein",
+    "HealthCloudAddOn",
+    "HealthCloudUser",
+    "ContactsToMultipleAccounts",
+    "PersonAccounts"
+  ],
+  "settings": {
+    "lightningExperienceSettings": { "enableS1DesktopEnabled": true },
+    "mobileSettings": { "enableS1EncryptedStoragePref2": false },
+    "agentPlatformSettings": { "enableAgentPlatform": true },
+    "einsteinGptSettings": { "enableEinsteinGptPlatform": true }
+  }
+}

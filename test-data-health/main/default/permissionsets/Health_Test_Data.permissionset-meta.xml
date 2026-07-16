@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Health Test Data</label>
+    <hasActivationRequired>false</hasActivationRequired>
+    <classAccesses>
+        <apexClass>TestDataHealthSupport</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TestDataPatientFactory</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TestDataProviderFactory</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>TestDataCareProgramFactory</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <tabSettings>
+        <tab>Health_Test_Data</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+</PermissionSet>

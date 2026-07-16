@@ -35,6 +35,21 @@
           "versionNumber": "0.1.0.LATEST"
         }
       ]
+    },
+    {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "path": "test-data-health",
+      "default": false,
+      "package": "test-data-health",
+      "versionDescription": "LLM-generated Health Cloud test data; v1 covers Patient (Person Account), HealthcareProvider, CareProgram.",
+      "definitionFile": "config/healthcloud-scratch-def.json",
+      "dependencies": [
+        {
+          "package": "models",
+          "versionNumber": "0.1.0.LATEST"
+        }
+      ]
     }
   ],
   "name": "Salesforce Explained",
@@ -49,6 +64,8 @@
     "test-data-sales@0.1.0-1": "04tg7000000EbvlAAC",
     "models": "0Hog70000000nGrCAI",
     "models@0.1.0-1": "04tg7000000EbxNAAS",
-    "test-data-sales@0.1.0-2": "04tg7000000EbyzAAC"
+    "test-data-sales@0.1.0-2": "04tg7000000EbyzAAC",
+    "test-data-health": "0Hog700000010cHCAQ",
+    "test-data-health@0.1.0-1": "04tg7000000FN9BAAW"
   }
 }

@@ -29,6 +29,49 @@ The `models` package (ModelsApiService) requires the Einstein features from
 `config/project-scratch-def.json`; `test-data-sales` won't install without
 `models` already present.
 
+## Health Cloud (`test-data-health`)
+
+`test-data-health` generates LLM-backed Health Cloud test data. It ships a
+**Health Test Data** app whose page has one LWC card per Health Cloud object —
+Patient (Person Account), HealthcareProvider, CareProgram — each with a button
+that calls Apex, asks the Models API for a realistic fictional record, and
+inserts it. Same shape as `test-data-sales`, and like it, this package depends
+only on `models`.
+
+Health Cloud is enabled by **scratch-org features, not a managed-package
+install**. `config/healthcloud-scratch-def.json` adds `HealthCloudAddOn`,
+`HealthCloudUser`, `ContactsToMultipleAccounts`, and `PersonAccounts` on top of
+the Einstein features that `models` needs, so org creation delivers the whole
+Health Cloud data model. There is no Health Cloud `04t` to install or declare.
+
+```bash
+# 1. Create the org (this is what turns Health Cloud on)
+sf org create scratch --definition-file config/healthcloud-scratch-def.json \
+  --alias health --set-default --duration-days 7 --wait 15
+
+# 2. Install the dependency first, then the package
+sf package install -p models@0.1.0-1 -o health -w 10
+sf package install -p test-data-health@0.1.0-1 -o health -w 10
+
+# 3. Grant yourself Apex + tab access, then open the app
+sf org assign permset --name Health_Test_Data -o health
+sf org open -o health --path lightning/n/Health_Test_Data
+```
+
+`base` is not required here — `test-data-health` declares `models` as its only
+dependency, and `sf package install` does not resolve dependencies for you, so
+`models` must go in first.
+
+To iterate on the source instead of installing the built version, deploy the
+package directory directly (`sf project deploy start --source-dir
+test-data-health -o health`) — but don't mix that with an installed version of
+the same package in one org.
+
+Note: each generate button runs one Models API callout then a DML insert, so a
+factory can be called once per transaction (callout-after-DML rule). One click =
+one record = one transaction. Generating many records in a single transaction
+would need the callouts batched ahead of the DML, or a Queueable chain.
+
 # Apex
 
 Salesforce's proprietary programming language. A list of all ways it can run: APEX_EXECUTION_CONTEXT_TODO.md

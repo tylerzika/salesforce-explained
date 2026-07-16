@@ -1,0 +1,21 @@
+<template>
+  <lightning-card title={cardTitle} icon-name="standard:program_cohort">
+    <div class="slds-p-horizontal_small slds-p-bottom_small">
+      <lightning-button
+        variant="brand"
+        label="Create Test Care Program"
+        title="Generate a realistic care program with AI and insert it"
+        onclick={handleClick}
+        disabled={buttonDisabled}
+      ></lightning-button>
+
+      <template lwc:if={isWorking}>
+        <lightning-spinner alternative-text="Generating care program" size="small"></lightning-spinner>
+      </template>
+
+      <template lwc:if={message}>
+        <p class={messageClass}>{message}</p>
+      </template>
+    </div>
+  </lightning-card>
+</template>

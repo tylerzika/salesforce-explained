@@ -1,0 +1,21 @@
+<template>
+  <lightning-card title={cardTitle} icon-name="standard:person_account">
+    <div class="slds-p-horizontal_small slds-p-bottom_small">
+      <lightning-button
+        variant="brand"
+        label="Create Test Patient"
+        title="Generate a realistic patient with AI and insert it as a Person Account"
+        onclick={handleClick}
+        disabled={buttonDisabled}
+      ></lightning-button>
+
+      <template lwc:if={isWorking}>
+        <lightning-spinner alternative-text="Generating patient" size="small"></lightning-spinner>
+      </template>
+
+      <template lwc:if={message}>
+        <p class={messageClass}>{message}</p>
+      </template>
+    </div>
+  </lightning-card>
+</template>
