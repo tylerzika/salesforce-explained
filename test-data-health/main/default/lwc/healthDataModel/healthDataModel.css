@@ -1,0 +1,251 @@
+.title {
+  font-weight: 700;
+}
+
+.subtitle {
+  font-weight: 400;
+  color: #5c5c5c;
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+}
+
+/* The canvas is a fixed coordinate space so the SVG connectors line up with the
+   absolutely-positioned nodes. It scrolls rather than reflows on narrow screens,
+   which preserves the diagram's shape. */
+.canvas-wrap {
+  overflow-x: auto;
+  padding: 0.5rem 1rem 0;
+}
+
+.canvas {
+  position: relative;
+  width: 1040px;
+  height: 560px;
+  background-color: #f7f9fb;
+  background-image: radial-gradient(#dfe6ee 1px, transparent 1px);
+  background-size: 20px 20px;
+  border: 1px solid #e3e9ee;
+  border-radius: 6px;
+}
+
+.wires {
+  position: absolute;
+  inset: 0;
+  width: 1040px;
+  height: 560px;
+  pointer-events: none;
+}
+
+.wire {
+  fill: none;
+  stroke: #98a9bc;
+  stroke-width: 2;
+  stroke-dasharray: 5 3;
+}
+
+.wire_master {
+  stroke: #0b5cab;
+  stroke-width: 2.5;
+  stroke-dasharray: none;
+}
+
+.wire_soft {
+  stroke: #c3ccd7;
+}
+
+.card-label {
+  fill: #5c6b7a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.wire-note {
+  fill: #8794a3;
+  font-size: 11px;
+  font-style: italic;
+  text-anchor: middle;
+}
+
+/* Nodes */
+.node {
+  position: absolute;
+  width: 280px;
+  background: #ffffff;
+  border: 1px solid #cfd8e3;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(24, 39, 56, 0.12);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.node_junction {
+  border-color: #b48adf;
+  border-style: dashed;
+}
+
+.node-head {
+  padding: 0.4rem 0.6rem;
+  color: #ffffff;
+}
+
+.node-head_standard {
+  background: #0b5cab;
+}
+
+.node-head_junction {
+  background: #7326c4;
+}
+
+.node-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+
+.node-api {
+  display: block;
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.68rem;
+  opacity: 0.85;
+}
+
+.node-fields {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+}
+
+.field-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.22rem 0.6rem;
+  font-size: 0.72rem;
+  border-bottom: 1px solid #eef2f6;
+}
+
+.fname {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  color: #2b3a4a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Foreign keys are what make this a model rather than a list of fields. */
+.fname_fk {
+  color: #0b5cab;
+  font-weight: 700;
+}
+
+.fname_accent {
+  color: #7326c4;
+  font-weight: 700;
+}
+
+.ftype {
+  color: #8794a3;
+  white-space: nowrap;
+  font-size: 0.68rem;
+}
+
+.node-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: #fafcfd;
+  border-top: 1px solid #e3e9ee;
+}
+
+.count-badge {
+  font-size: 0.7rem;
+  color: #5c6b7a;
+  background: #eef2f6;
+  border-radius: 10px;
+  padding: 0.1rem 0.5rem;
+  white-space: nowrap;
+}
+
+.gen-button {
+  border: 1px solid #0b5cab;
+  background: #0b5cab;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.72rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.gen-button:hover:not(:disabled) {
+  background: #084a8c;
+}
+
+.gen-button:disabled {
+  background: #9bb4cf;
+  border-color: #9bb4cf;
+  cursor: default;
+}
+
+.node_junction .gen-button {
+  background: #7326c4;
+  border-color: #7326c4;
+}
+
+.node_junction .gen-button:hover:not(:disabled) {
+  background: #5c1ea0;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1rem 0.25rem;
+  font-size: 0.72rem;
+  color: #5c6b7a;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.swatch_standard {
+  background: #0b5cab;
+}
+
+.swatch_junction {
+  background: #7326c4;
+}
+
+.line-key {
+  width: 18px;
+  height: 0;
+  border-top: 2px dashed #98a9bc;
+  display: inline-block;
+}
+
+.line-key_master {
+  border-top: 2.5px solid #0b5cab;
+}
+
+.legend-note {
+  margin-left: auto;
+  font-style: italic;
+  color: #8794a3;
+}

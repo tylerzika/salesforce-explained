@@ -5,32 +5,8 @@
         <type>Region</type>
         <itemInstances>
             <componentInstance>
-                <componentName>c:createTestPatient</componentName>
-                <identifier>createTestPatient1</identifier>
-                <componentInstanceProperties>
-                    <name>cardTitle</name>
-                    <value>Patient (Person Account)</value>
-                </componentInstanceProperties>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>c:createTestProvider</componentName>
-                <identifier>createTestProvider1</identifier>
-                <componentInstanceProperties>
-                    <name>cardTitle</name>
-                    <value>Healthcare Provider</value>
-                </componentInstanceProperties>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>c:createTestCareProgram</componentName>
-                <identifier>createTestCareProgram1</identifier>
-                <componentInstanceProperties>
-                    <name>cardTitle</name>
-                    <value>Care Program</value>
-                </componentInstanceProperties>
+                <componentName>c:healthDataModel</componentName>
+                <identifier>healthDataModel1</identifier>
             </componentInstance>
         </itemInstances>
     </flexiPageRegions>

@@ -1,0 +1,77 @@
+<template>
+  <lightning-card icon-name="standard:hierarchy">
+    <h1 slot="title">
+      <span class="title">Health Cloud Data Model</span>
+      <span class="subtitle">Click a node to generate a record into it</span>
+    </h1>
+
+    <div class="canvas-wrap">
+      <div class="canvas">
+        <!-- Connectors. Coordinates are tied to the node geometry in the JS
+             NODES config (1040x560 canvas), so lines stay glued to the boxes. -->
+        <svg class="wires" viewBox="0 0 1040 560" xmlns="http://www.w3.org/2000/svg">
+          <!-- HealthcareProvider.AccountId -> Account -->
+          <path class="wire" d="M 164 316 L 164 250 L 430 250 L 430 232" />
+          <text class="card-label" x="176" y="242">N</text>
+          <text class="card-label" x="410" y="242">1</text>
+
+          <!-- CareProgram.SponsorId -> Account (sponsor) -->
+          <path class="wire wire_soft" d="M 876 316 L 876 250 L 610 250 L 610 232" />
+          <text class="card-label" x="856" y="242">N</text>
+          <text class="card-label" x="620" y="242">1</text>
+          <text class="wire-note" x="700" y="242">Sponsor</text>
+
+          <!-- CareProgramEnrollee.AccountId -> Account -->
+          <path class="wire" d="M 520 336 L 520 232" />
+          <text class="card-label" x="530" y="330">N</text>
+          <text class="card-label" x="530" y="248">1</text>
+
+          <!-- CareProgramEnrollee.CareProgramId -> CareProgram (required, master) -->
+          <path class="wire wire_master" d="M 660 420 L 736 420" />
+          <text class="card-label" x="668" y="412">N</text>
+          <text class="card-label" x="720" y="412">1</text>
+        </svg>
+
+        <template for:each={nodes} for:item="n">
+          <div key={n.key} class={n.cssClass} style={n.style}>
+            <div class={n.headClass}>
+              <span class="node-label">{n.label}</span>
+              <span class="node-api">{n.api}</span>
+            </div>
+
+            <ul class="node-fields">
+              <template for:each={n.fields} for:item="f">
+                <li key={f.name} class="field-row">
+                  <span class={f.nameClass}>{f.name}</span>
+                  <span class="ftype">{f.type}</span>
+                </li>
+              </template>
+            </ul>
+
+            <div class="node-foot">
+              <span class="count-badge">{n.countLabel}</span>
+              <button
+                class="gen-button"
+                data-key={n.key}
+                onclick={handleGenerate}
+                disabled={n.busy}
+                title={n.buttonLabel}
+              >
+                <template lwc:if={n.busy}>Working…</template>
+                <template lwc:else>{n.buttonLabel}</template>
+              </button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="swatch swatch_standard"></span>Standard HC object</span>
+      <span class="legend-item"><span class="swatch swatch_junction"></span>Junction (enrollment)</span>
+      <span class="legend-item"><span class="line-key line-key_master"></span>Required / master</span>
+      <span class="legend-item"><span class="line-key"></span>Lookup</span>
+      <span class="legend-item legend-note">Health Cloud enabled by scratch-org feature — no managed package</span>
+    </div>
+  </lightning-card>
+</template>

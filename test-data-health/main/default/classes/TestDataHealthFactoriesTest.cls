@@ -172,6 +172,65 @@ private class TestDataHealthFactoriesTest {
     System.assertNotEquals('Ongoing', program.Status, 'Invalid status should not be applied');
   }
 
+  // ---- CareProgramEnrollee (junction, no model call) -------------------------
+
+  @IsTest
+  static void enrollsExistingPatientIntoExistingProgram() {
+    Id personType = [
+      SELECT Id FROM RecordType WHERE SObjectType = 'Account' AND IsPersonType = TRUE AND IsActive = TRUE LIMIT 1
+    ]
+    .Id;
+    insert new Account(RecordTypeId = personType, FirstName = 'Ada', LastName = 'Lovelace');
+    insert new CareProgram(Name = 'Cardiac Rehab');
+
+    Test.startTest();
+    TestDataHealthSupport.Result result = TestDataEnrolleeFactory.enrollPatient();
+    Test.stopTest();
+
+    CareProgramEnrollee enrollee = [
+      SELECT Name, AccountId, CareProgramId, BenefitCoverageType, EnrolleeType
+      FROM CareProgramEnrollee
+      WHERE Id = :result.recordId
+    ];
+    System.assertNotEquals(null, enrollee.AccountId, 'Enrollee should link the patient');
+    System.assertNotEquals(null, enrollee.CareProgramId, 'Enrollee should link the care program');
+    System.assertEquals('Ada Lovelace / Cardiac Rehab', enrollee.Name);
+    System.assertNotEquals(null, enrollee.EnrolleeType, 'EnrolleeType should be seeded');
+  }
+
+  @IsTest
+  static void enrollRequiresAPatientToExist() {
+    // No patient, no program — the junction must explain what's missing rather
+    // than fail on a null foreign key.
+    Test.startTest();
+    Boolean threw = false;
+    try {
+      TestDataEnrolleeFactory.enrollPatient();
+    } catch (AuraHandledException e) {
+      threw = true;
+    }
+    Test.stopTest();
+
+    System.assertEquals(true, threw, 'Enrolling with no patient should raise AuraHandledException');
+    System.assertEquals(0, [SELECT COUNT() FROM CareProgramEnrollee], 'No enrollee should be created');
+  }
+
+  // ---- Overview counts ------------------------------------------------------
+
+  @IsTest
+  static void countsCoverEveryDiagramNode() {
+    insert new CareProgram(Name = 'Counted Program');
+
+    Test.startTest();
+    Map<String, Integer> counts = TestDataHealthOverview.getCounts();
+    Test.stopTest();
+
+    System.assertEquals(true, counts.containsKey('patient'), 'patient count expected');
+    System.assertEquals(true, counts.containsKey('provider'), 'provider count expected');
+    System.assertEquals(true, counts.containsKey('enrollee'), 'enrollee count expected');
+    System.assertEquals(1, counts.get('careProgram'), 'careProgram count should reflect inserted data');
+  }
+
   // ---- Shared error contract ------------------------------------------------
 
   @IsTest
